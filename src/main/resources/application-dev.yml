@@ -4,6 +4,6 @@ spring:
   devtools:
     add-properties: true
   sendgrid:
-    api-key: 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
+    api-key: ${SENDGRID_API_KEY}
     from-email: duynguyencoder154@gmail.com
 
