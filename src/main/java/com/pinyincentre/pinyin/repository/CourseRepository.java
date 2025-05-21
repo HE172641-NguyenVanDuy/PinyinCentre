@@ -1,0 +1,31 @@
+package com.pinyincentre.pinyin.repository;
+
+import com.pinyincentre.pinyin.dto.response.CourseResponse;
+import com.pinyincentre.pinyin.entity.Course;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface CourseRepository extends JpaRepository<Course, String> {
+
+    @Query(value = """
+    SELECT c.id, c.course_name, c.started_date, c.end_date FROM (
+        SELECT id from courses where is_delete = 0
+    	AND end_date >= CURRENT_DATE
+    	LIMIT :limit OFFSET :offset
+    ) as TEMP
+    INNER JOIN courses as c on c.id = TEMP.id
+    ORDER BY end_date ASC, created_date DESC;
+    """, nativeQuery = true)
+    List<CourseResponse> getAllCourseActiveWithPagination(@Param("limit") int limit,
+                                                    @Param("offset") int offset);
+
+    @Query(value = """
+    SELECT c.id, c.course_name, c.started_date, c.end_date FROM Courses c WHERE c.id = :id
+    """, nativeQuery = true)
+    CourseResponse getCourseById(@Param("id") String id);
+}
