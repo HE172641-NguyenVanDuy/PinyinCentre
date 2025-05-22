@@ -16,12 +16,9 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class Course extends UUIDBaseEntity {
-    @Column(name = "course_name")
+    @Column(name = "course_name", nullable = false)
     private String courseName;
 
-    @Column(name = "started_date")
-    private LocalDateTime startDate;
-
-    @Column(name = "end_date")
-    private LocalDateTime endDate;
+    @Column(name = "slot_quantity", nullable = false)
+    private int slotNumber;
 }

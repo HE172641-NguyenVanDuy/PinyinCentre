@@ -24,7 +24,7 @@ public class UserController {
 
     @GetMapping("/get-users-active")
     public ResponseEntity<ApiResponse<List<UserResponse>>> listUsersActive(@RequestParam(defaultValue = "1") int page,
-                                                                           @RequestParam(required = false) Integer pageSize) {
+                                                                           @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         List<UserResponse> lstUsers = userService.getAllUsersActive(pageSize, page);
         ApiResponse<List<UserResponse>> apiResponse = ApiResponse.<List<UserResponse>>builder()
                 .status(HttpStatus.OK.value())
@@ -34,8 +34,8 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping("/get-user")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@RequestParam String id) {
+    @GetMapping("/get-user/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable("id") String id) {
         UserResponse user = userService.getUserById(id);
         ApiResponse<UserResponse> apiResponse = ApiResponse.<UserResponse>builder()
                 .status(HttpStatus.OK.value())
@@ -56,8 +56,8 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PatchMapping("/update-user")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestParam String id, UserUpdateRequest userRequest) {
+    @PutMapping("/update-user")
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestParam String id, @RequestBody UserUpdateRequest userRequest) {
         UserResponse userResponse = userService.updateUser(userRequest, id);
         ApiResponse<UserResponse> apiResponse = ApiResponse.<UserResponse>builder()
                 .status(HttpStatus.OK.value())
@@ -67,14 +67,14 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PostMapping("/create-user")
-    public ResponseEntity<ApiResponse<UserResponse>> createUser(UserRequest userRequest) {
-        UserResponse userResponse = userService.createUser(userRequest);
-        ApiResponse<UserResponse> apiResponse = ApiResponse.<UserResponse>builder()
-                .status(HttpStatus.OK.value())
-                .message(ErrorCode.SUCCESS.getMessage())
-                .result(userResponse)
-                .build();
-        return ResponseEntity.ok(apiResponse);
-    }
+//    @PostMapping("/create-user")
+//    public ResponseEntity<ApiResponse<UserResponse>> createUser(@RequestBody UserRequest userRequest) {
+//        UserResponse userResponse = userService.createUser(userRequest);
+//        ApiResponse<UserResponse> apiResponse = ApiResponse.<UserResponse>builder()
+//                .status(HttpStatus.OK.value())
+//                .message(ErrorCode.SUCCESS.getMessage())
+//                .result(userResponse)
+//                .build();
+//        return ResponseEntity.ok(apiResponse);
+//    }
 }

@@ -28,7 +28,7 @@ public interface RegistrationInfoRepository extends JpaRepository<RegistrationIn
 
     @Modifying
     @Query(value = """
-    UPDATE registration_info SET is_registered = :isRegistered WHERE id = :id 
+    UPDATE registration_info SET is_registered = :isRegistered, updated_date = CURRENT_TIMESTAMP WHERE id = :id 
     """, nativeQuery = true)
     int updateIsRegistered(@Param("isRegistered")int isRegistered,@Param("id") String id);
 

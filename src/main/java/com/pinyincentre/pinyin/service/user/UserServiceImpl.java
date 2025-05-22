@@ -7,6 +7,7 @@ import com.pinyincentre.pinyin.entity.User;
 import com.pinyincentre.pinyin.exception.AppException;
 import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,13 @@ public class UserServiceImpl implements UserService {
 
     private static final int PAGE_SIZE = 10;
 
+    @Transactional
     @Override
     public UserResponse createUser(UserRequest request) {
         boolean existUsername = false;
         boolean existEmail = false;
         String message;
-        User user = new User();
+        User user;
         if(!userRepository.existsByUsername(request.getUsername())) {
             existUsername = true;
         }
@@ -55,6 +57,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     public UserResponse updateUser(UserUpdateRequest request, String uid) {
         User user = userRepository.findById(uid).orElseThrow(
@@ -68,10 +71,11 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @Transactional
     @Override
     public String banUser(String uid) {
-        String message = "";
-        int count = 0;
+        String message;
+        int count;
         if(uid.isEmpty()) {
             return ErrorCode.USER_ID_EMPTY.getMessage();
         }

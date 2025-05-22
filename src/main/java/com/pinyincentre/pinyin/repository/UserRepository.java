@@ -3,6 +3,7 @@ package com.pinyincentre.pinyin.repository;
 import com.pinyincentre.pinyin.dto.response.UserResponse;
 import com.pinyincentre.pinyin.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,7 @@ public interface UserRepository extends JpaRepository<User,String> {
     @Query(value = "SELECT COUNT(u) > 0 FROM Users u WHERE u.user_name = :userName", nativeQuery = true)
     boolean existsByUsername(@Param("userName") String userName);
 
+    @Modifying
     @Query(value = "UPDATE USERS u SET u.status = :status WHERE u.id = :id", nativeQuery = true)
     int changeStatusUserById(@Param("id") String id,@Param("status") int status);
 
