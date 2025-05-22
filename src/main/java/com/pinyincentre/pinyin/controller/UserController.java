@@ -67,14 +67,14 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
-//    @PostMapping("/create-user")
-//    public ResponseEntity<ApiResponse<UserResponse>> createUser(@RequestBody UserRequest userRequest) {
-//        UserResponse userResponse = userService.createUser(userRequest);
-//        ApiResponse<UserResponse> apiResponse = ApiResponse.<UserResponse>builder()
-//                .status(HttpStatus.OK.value())
-//                .message(ErrorCode.SUCCESS.getMessage())
-//                .result(userResponse)
-//                .build();
-//        return ResponseEntity.ok(apiResponse);
-//    }
+    @PostMapping("/create-user")
+    public ResponseEntity<ApiResponse<UserResponse>> createUser(@RequestBody UserRequest userRequest) {
+        UserResponse userResponse = userService.createUser(userRequest);
+        ApiResponse<UserResponse> apiResponse = ApiResponse.<UserResponse>builder()
+                .status(HttpStatus.OK.value())
+                .message(ErrorCode.SUCCESS.getMessage())
+                .result(userResponse)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
 }

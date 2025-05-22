@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 public interface CourseMapper {
 
 
-    @Mapping(source = "startDate", target = "startDate")
-    @Mapping(source = "endDate", target = "endDate")
+//    @Mapping(source = "startDate", target = "startDate")
+//    @Mapping(source = "endDate", target = "endDate")
     Course toCourse(CourseRequest request);
     CourseResponse toCourseResponse(Course course);
     default Timestamp map(LocalDateTime localDateTime) {

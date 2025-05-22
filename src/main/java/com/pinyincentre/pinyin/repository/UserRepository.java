@@ -12,18 +12,18 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,String> {
-    @Query(value = "SELECT COUNT(u) > 0 FROM Users u WHERE u.email = :email", nativeQuery = true)
-    boolean existsByEmail(@Param("email") String email);
+    //@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM Users WHERE email = :email", nativeQuery = true)
+    boolean existsByEmail(String email);
 
-    @Query(value = "SELECT COUNT(u) > 0 FROM Users u WHERE u.user_name = :userName", nativeQuery = true)
-    boolean existsByUsername(@Param("userName") String userName);
+   // @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM Users WHERE username = :userName", nativeQuery = true)
+    boolean existsByUsername( String userName);
 
     @Modifying
     @Query(value = "UPDATE USERS u SET u.status = :status WHERE u.id = :id", nativeQuery = true)
     int changeStatusUserById(@Param("id") String id,@Param("status") int status);
 
     @Query(value = """
-    				SELECT U.id, U.username, U.email, U.phone_number, U.dob, u.cic, U.full_name, U.update_date, U.create_date, U.expired_date, status
+    				SELECT U.id, U.username, U.email, U.phone_number, U.dob, u.cic, U.full_name, U.updated_date, U.created_date, U.expired_date, status
     				FROM (
     					SELECT id FROM USERS WHERE status = :status AND ( is_delete = 0 OR is_delete IS NULL )
     					ORDER BY created_date, username DESC LIMIT :limit OFFSET :offset

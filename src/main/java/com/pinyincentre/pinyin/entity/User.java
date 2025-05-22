@@ -36,7 +36,7 @@ public class User extends UUIDBaseEntity implements Serializable {
     @Column(name="cic")
     private String cic;
 
-    @Column(name = "phoneNumber")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name="expired_date")

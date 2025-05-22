@@ -26,6 +26,8 @@ public abstract class BaseEntity<T> {
     @PrePersist
     protected void onCreate() {
         createdDate = LocalDateTime.now();
+        System.out.println("PrePersist called, setting createdDate & updatedDate: " + LocalDateTime.now());
+        //updatedDate = LocalDateTime.now();
     }
 
     @PreUpdate

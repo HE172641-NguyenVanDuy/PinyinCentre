@@ -33,17 +33,17 @@ public class UserServiceImpl implements UserService {
         boolean existEmail = false;
         String message;
         User user;
-        if(!userRepository.existsByUsername(request.getUsername())) {
+        if(userRepository.existsByUsername(request.getUsername())) {
             existUsername = true;
         }
-        if(!userRepository.existsByEmail(request.getEmail())) {
+        if(userRepository.existsByEmail(request.getEmail())) {
             existEmail = true;
         }
         if(!existUsername && !existEmail) {
             user = userMapper.toUser(request);
             user.setStatus(UserStatus.ACTIVE.getCode());
-            message = ErrorCode.CREATE_USER.getMessage();
-            log.warn(message);
+//            message = ErrorCode.CREATE_USER.getMessage();
+//            log.warn(message);
         } else {
             if(existEmail) {
                 message = ErrorCode.EXIST_EMAIL.getMessage();

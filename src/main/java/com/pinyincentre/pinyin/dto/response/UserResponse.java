@@ -2,6 +2,7 @@ package com.pinyincentre.pinyin.dto.response;
 
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -12,15 +13,15 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class UserResponse {
-    String id;
-    String username;
-    String email;
-    String phoneNumber;
-    LocalDateTime birthday;
-    String cic;
-    String fullName;
-    LocalDateTime updateDate;
-    LocalDateTime createDate;
-    LocalDateTime expireDate;
-    int status;
+    private String id;
+    private String username;
+    private String email;
+    private String phoneNumber;
+    private LocalDateTime birthday;
+    private String cic;
+    private String fullName;
+    private Timestamp updateDate;
+    private Timestamp createDate;
+    private Timestamp expireDate;
+    private int status;
 }
