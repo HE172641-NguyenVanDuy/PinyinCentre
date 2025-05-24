@@ -13,19 +13,19 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, String> {
 
     @Query(value = """
-    SELECT c.id, c.course_name, c.started_date, c.end_date FROM (
-        SELECT id from courses where is_delete = 0
-    	AND end_date >= CURRENT_DATE
-    	LIMIT :limit OFFSET :offset
-    ) as TEMP
-    INNER JOIN courses as c on c.id = TEMP.id
-    ORDER BY end_date ASC, created_date DESC;
+    SELECT c.id, c.course_name, c.created_date, c.updated_date, c.slot_quantity
+    FROM courses c
+    WHERE c.is_delete = 0
+    ORDER BY c.created_date DESC
+    LIMIT :limit OFFSET :offset
     """, nativeQuery = true)
     List<CourseResponse> getAllCourseActiveWithPagination(@Param("limit") int limit,
-                                                    @Param("offset") int offset);
+                                                          @Param("offset") int offset);
 
     @Query(value = """
-    SELECT c.id, c.course_name, c.started_date, c.end_date FROM Courses c WHERE c.id = :id
+    SELECT c.id, c.course_name, c.created_date, c.updated_date, c.slot_quantity
+    FROM courses c
+    WHERE c.id = :id
     """, nativeQuery = true)
     CourseResponse getCourseById(@Param("id") String id);
 }

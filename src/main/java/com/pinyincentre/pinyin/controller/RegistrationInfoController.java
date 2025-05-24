@@ -5,6 +5,7 @@ import com.pinyincentre.pinyin.dto.response.ApiResponse;
 import com.pinyincentre.pinyin.dto.response.RegistrationInfoResponse;
 import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.service.registration_info.RegistrationInfoService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,8 @@ public class RegistrationInfoController {
     private RegistrationInfoService registrationInfoService;
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<RegistrationInfoResponse>> createRegistrationInfo(@RequestBody RegistrationInfoRequest request) {
+    public ResponseEntity<ApiResponse<RegistrationInfoResponse>> createRegistrationInfo(
+            @Valid @RequestBody RegistrationInfoRequest request) {
         log.info("Registration Request: {}", request);
         RegistrationInfoResponse response = registrationInfoService.createRegistrationInfo(request);
         log.info("Registration Response: {}", response);
