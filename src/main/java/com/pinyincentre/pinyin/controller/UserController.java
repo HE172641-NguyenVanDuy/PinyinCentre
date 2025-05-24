@@ -56,8 +56,8 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PutMapping("/update-user")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestParam String id, @RequestBody UserUpdateRequest userRequest) {
+    @PutMapping("/update-user/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable("id") String id, @RequestBody UserUpdateRequest userRequest) {
         UserResponse userResponse = userService.updateUser(userRequest, id);
         ApiResponse<UserResponse> apiResponse = ApiResponse.<UserResponse>builder()
                 .status(HttpStatus.OK.value())

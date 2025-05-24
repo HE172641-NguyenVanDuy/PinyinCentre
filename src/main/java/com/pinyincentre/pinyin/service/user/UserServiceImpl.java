@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -60,15 +61,17 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserResponse updateUser(UserUpdateRequest request, String uid) {
+        log.info("User request: {}", request);
         User user = userRepository.findById(uid).orElseThrow(
                 () -> new AppException(ErrorCode.NOT_FOUND)
         );
-        log.info("User information: {}", user);
+        log.info("User information: {},  {}", user, user.getDob());
         userMapper.updateUserFromRequest(request, user);
-
-        user = userRepository.save(user);
-        log.info("User after update: {}", user);
-        return userMapper.toUserResponse(user);
+        user.setUpdatedDate(LocalDateTime.now());
+        log.info("User updated: {}", user);
+        User savedUser = userRepository.save(user);
+        log.info("User after update: {}", savedUser);
+        return userMapper.toUserResponse(savedUser);
     }
 
     @Transactional

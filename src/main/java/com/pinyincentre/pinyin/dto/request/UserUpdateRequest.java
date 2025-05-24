@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @ToString
 public class UserUpdateRequest {
 
-    private String id;
+    //private String id;
 
 //    @Size(min = 6, max = 30, message = "Username phải từ 6-30 ký tự")
 //    @Pattern(regexp = "^[a-zA-Z0-9_.]+$", message = "Username chỉ được chứa chữ, số, dấu gạch dưới hoặc dấu chấm")
