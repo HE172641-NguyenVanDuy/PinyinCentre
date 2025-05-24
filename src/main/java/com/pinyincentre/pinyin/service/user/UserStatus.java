@@ -19,4 +19,11 @@ public enum UserStatus {
         return statusName;
     }
 
+    public static UserStatus fromCode(int code) {
+        for (UserStatus s : values()) {
+            if (s.code == code) return s;
+        }
+        throw new IllegalArgumentException("Unknown code: " + code);
+    }
+
 }

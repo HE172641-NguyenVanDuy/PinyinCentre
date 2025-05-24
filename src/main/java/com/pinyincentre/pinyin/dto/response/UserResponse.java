@@ -17,11 +17,11 @@ public class UserResponse {
     private String username;
     private String email;
     private String phoneNumber;
-    private LocalDateTime birthday;
+    private Timestamp dob;
     private String cic;
     private String fullName;
     private Timestamp updateDate;
     private Timestamp createDate;
     private Timestamp expireDate;
-    private int status;
+    private String status;
 }
