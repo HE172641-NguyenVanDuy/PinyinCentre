@@ -1,9 +1,11 @@
 package com.pinyincentre.pinyin.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.method.MethodValidationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -80,5 +82,37 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(err ->
+                errors.put(err.getField(), err.getDefaultMessage())
+        );
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("error", "Bad Request");
+        response.put("message", "Dữ liệu không hợp lệ");
+        response.put("path", request.getRequestURI());
+        response.put("timestamp", LocalDateTime.now());
+        response.put("errors", errors);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleDuplicateEntry(DataIntegrityViolationException ex, HttpServletRequest request) {
+        String message = ex.getRootCause() != null && ex.getRootCause().getMessage() != null
+                && ex.getRootCause().getMessage().contains("Duplicate entry")
+                ? "Email này đã được đăng ký trước đó."
+                : "Dữ liệu không hợp lệ hoặc trùng lặp.";
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", 400);
+        response.put("message", message);
+        response.put("path", request.getRequestURI());
+        response.put("timestamp", LocalDateTime.now());
+
+        return ResponseEntity.badRequest().body(response);
+    }
 }
 
