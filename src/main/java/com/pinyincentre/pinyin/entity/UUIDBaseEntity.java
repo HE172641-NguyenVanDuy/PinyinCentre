@@ -1,15 +1,20 @@
 package com.pinyincentre.pinyin.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
+@Getter
+@Setter
 @MappedSuperclass
 public abstract class UUIDBaseEntity extends BaseEntity<String> {
+//@GeneratedValue(strategy = GenerationType.UUID)
 
-//    @GeneratedValue(strategy = GenerationType.UUID)
-//    @Column(name = "id", updatable = false, nullable = false)
-//    protected String id;
+    @Id
+    @Column(name = "id", updatable = false, nullable = false)
+    protected String id;
 //
 //
 //    @Override
