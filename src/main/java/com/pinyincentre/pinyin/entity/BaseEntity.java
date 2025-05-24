@@ -10,9 +10,8 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class BaseEntity<T> {
 
-    @Id
-    @Column(name = "id", updatable = false, nullable = false)
-    protected T id;
+
+    //protected T id;
 
     @Column(name = "created_date", nullable = false, updatable = false)
     protected LocalDateTime createdDate;
