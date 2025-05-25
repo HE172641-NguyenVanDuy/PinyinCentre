@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -63,7 +64,7 @@ public class RegistrationInfoServiceImpl implements RegistrationInfoService {
 
     @Transactional
     @Override
-    public String changeToRegistered(String id) {
+    public String changeToRegistered(String id) throws IOException {
         int count;
         RegistrationInfoResponse registrationResponse = getRegistrationInfoById(id);
 

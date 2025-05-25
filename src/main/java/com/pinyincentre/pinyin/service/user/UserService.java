@@ -5,12 +5,13 @@ import com.pinyincentre.pinyin.dto.request.UserUpdateRequest;
 import com.pinyincentre.pinyin.dto.response.UserResponse;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public interface UserService {
 
-    UserResponse createUser(UserRequest request);
+    UserResponse createUser(UserRequest request) throws IOException;
 
     UserResponse updateUser(UserUpdateRequest request, String uid);
 

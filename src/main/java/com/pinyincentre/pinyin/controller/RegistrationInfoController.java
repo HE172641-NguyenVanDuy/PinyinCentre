@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -50,7 +51,7 @@ public class RegistrationInfoController {
     }
 
     @PutMapping("/register/{id}")
-    public ResponseEntity<ApiResponse<String>> updateRegistrationInfo(@PathVariable("id") String id) {
+    public ResponseEntity<ApiResponse<String>> updateRegistrationInfo(@PathVariable("id") String id) throws IOException {
         log.info("Update Registration Info: {}", id);
         String response = registrationInfoService.changeToRegistered(id);
         log.info("Registration Response: {}", response);
