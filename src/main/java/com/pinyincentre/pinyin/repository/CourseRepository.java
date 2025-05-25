@@ -28,4 +28,9 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     WHERE c.id = :id
     """, nativeQuery = true)
     CourseResponse getCourseById(@Param("id") String id);
+
+    @Query(value = """
+    SElECT c.course_name FROM Courses c WHERE c.id = :id
+    """,nativeQuery = true)
+    String findCourseNameById(@Param("id") String id);
 }

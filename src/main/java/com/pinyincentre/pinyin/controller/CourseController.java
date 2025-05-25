@@ -5,6 +5,7 @@ import com.pinyincentre.pinyin.dto.response.ApiResponse;
 import com.pinyincentre.pinyin.dto.response.CourseResponse;
 import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.service.course.CourseService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class CourseController {
     private CourseService courseService;
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<String>> createCourse(@RequestBody CourseRequest courseRequest) {
+    public ResponseEntity<ApiResponse<String>> createCourse(@RequestBody @Valid CourseRequest courseRequest) {
         log.info("Course request: {}", courseRequest);
         String response = courseService.createCourse(courseRequest);
         log.info("Course response: {}", response);

@@ -33,5 +33,8 @@ public interface UserRepository extends JpaRepository<User,String> {
     List<UserResponse> listUserPagination(@Param("status")int status,  @Param("limit") int limit,
                                           @Param("offset") int offset);
 
-
+    @Query(value = """
+    SELECT u.full_name FROM USERS u WHERE u.id = :id
+    """,nativeQuery = true)
+    String findFullNameById(@Param("id") String id);
 }
