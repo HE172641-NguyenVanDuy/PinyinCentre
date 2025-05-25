@@ -6,4 +6,5 @@ spring:
   sendgrid:
     api-key: ${SENDGRID_API_KEY}
     from-email: duynguyencoder154@gmail.com
-
+jwt:
+  signerKey: UGdbTz3YkVWozpUVwBwql2icrmDK+/jzQBMRFodzNj32RNNf2VCRFTac0CC9ePil

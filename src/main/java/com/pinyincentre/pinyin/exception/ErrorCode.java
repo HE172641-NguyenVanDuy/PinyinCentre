@@ -22,6 +22,8 @@ public enum ErrorCode {
     REGISTRATION_FAIL(2001,"Đăng kí tư vấn không thành công !", HttpStatus.OK),
     REGISTRATION_SUCCESS(2000,"Đăng kí tư vấn thành công !", HttpStatus.CREATED),
     NOT_FOUND(1005, "Not found !", HttpStatus.NOT_FOUND),
+    UNAUTHENTICATED(1003, "Xác minh user dùng không hợp lêk !", HttpStatus.NOT_FOUND),
+    USER_NOT_EXISTED(1002, "Người dùng không tồn tại !", HttpStatus.NOT_FOUND),
     SUCCESS(1000,"SUCCESS", HttpStatus.OK);
 
     private final int code;

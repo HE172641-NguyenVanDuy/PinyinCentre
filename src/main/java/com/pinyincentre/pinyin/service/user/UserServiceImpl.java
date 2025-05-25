@@ -7,11 +7,16 @@ import com.pinyincentre.pinyin.entity.User;
 import com.pinyincentre.pinyin.exception.AppException;
 import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.repository.UserRepository;
+import com.pinyincentre.pinyin.service.email.EmailService;
+import com.pinyincentre.pinyin.service.utils.RandomStringGenerator;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,13 +28,21 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     private UserMapper userMapper;
 
     private static final int PAGE_SIZE = 10;
 
+
+
     @Transactional
     @Override
-    public UserResponse createUser(UserRequest request) {
+    public UserResponse createUser(UserRequest request) throws IOException {
+        String testPass = "12345678";
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        String passwordGenerate;
         boolean existUsername = false;
         boolean existEmail = false;
         String message;
@@ -43,6 +56,12 @@ public class UserServiceImpl implements UserService {
         if(!existUsername && !existEmail) {
             user = userMapper.toUser(request);
             user.setStatus(UserStatus.ACTIVE.getCode());
+
+            // hash password
+            //passwordGenerate = RandomStringGenerator.generate();
+            passwordGenerate = testPass;
+            user.setPassword(passwordEncoder.encode(passwordGenerate));
+            emailService.emailVerification(user.getEmail(), user);
 //            message = ErrorCode.CREATE_USER.getMessage();
 //            log.warn(message);
         } else {
