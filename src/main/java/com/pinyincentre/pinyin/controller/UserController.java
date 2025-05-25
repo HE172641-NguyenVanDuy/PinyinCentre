@@ -6,6 +6,7 @@ import com.pinyincentre.pinyin.dto.response.ApiResponse;
 import com.pinyincentre.pinyin.dto.response.UserResponse;
 import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.service.user.UserService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,8 +46,8 @@ public class UserController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PatchMapping("/ban-user")
-    public ResponseEntity<ApiResponse<String>> banUser(@RequestParam String id) {
+    @PatchMapping("/ban-user/{id}")
+    public ResponseEntity<ApiResponse<String>> banUser(@PathVariable("id") String id) {
         String msg = userService.banUser(id);
         ApiResponse<String> apiResponse = ApiResponse.<String>builder()
                 .status(HttpStatus.OK.value())
@@ -57,7 +58,7 @@ public class UserController {
     }
 
     @PutMapping("/update-user/{id}")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable("id") String id, @RequestBody UserUpdateRequest userRequest) {
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable("id") String id,@Valid @RequestBody UserUpdateRequest userRequest) {
         UserResponse userResponse = userService.updateUser(userRequest, id);
         ApiResponse<UserResponse> apiResponse = ApiResponse.<UserResponse>builder()
                 .status(HttpStatus.OK.value())
@@ -68,7 +69,7 @@ public class UserController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<ApiResponse<UserResponse>> createUser(@RequestBody UserRequest userRequest) {
+    public ResponseEntity<ApiResponse<UserResponse>> createUser(@RequestBody @Valid UserRequest userRequest) {
         UserResponse userResponse = userService.createUser(userRequest);
         ApiResponse<UserResponse> apiResponse = ApiResponse.<UserResponse>builder()
                 .status(HttpStatus.OK.value())

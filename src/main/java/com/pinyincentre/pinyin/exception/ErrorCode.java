@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatusCode;
 
 public enum ErrorCode {
 
+    SAVE_CLASS_ERROR(5002, "Lớp không được lưu thành công !", HttpStatus.BAD_REQUEST),
+    CLASS_NOT_FOUND(5001, "Không tìm thấy lớp !", HttpStatus.BAD_REQUEST),
     BAN_USER_FAIL(4007, "Giới hạn tài khoản không thành công!", HttpStatus.OK),
     BAN_USER_SUCCESS(4006, "Giới hạn tài khoản thành công!", HttpStatus.OK),
     USER_ID_EMPTY(4005,"Username người dùng bị trống!",HttpStatus.BAD_REQUEST),

@@ -5,6 +5,7 @@ import com.pinyincentre.pinyin.dto.response.ApiResponse;
 import com.pinyincentre.pinyin.dto.response.LibraryResponse;
 import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.service.library.LibraryService;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class LibraryController {
     }
 
     @PostMapping("/create-files")
-    public ResponseEntity<ApiResponse<LibraryResponse>> createFiles(@RequestBody LibraryRequest libraryRequest) {
+    public ResponseEntity<ApiResponse<LibraryResponse>> createFiles(@RequestBody @Valid LibraryRequest libraryRequest) {
         LibraryResponse response = libraryService.createFileLinkInLibrary(libraryRequest);
         ApiResponse<LibraryResponse> apiResponse = ApiResponse.<LibraryResponse>builder()
                 .status(HttpStatus.OK.value())
@@ -47,7 +48,7 @@ public class LibraryController {
     }
 
     @PutMapping("/update-files/{id}")
-    public ResponseEntity<ApiResponse<LibraryResponse>> updateFiles(@PathVariable("id") Long id,
+    public ResponseEntity<ApiResponse<LibraryResponse>> updateFiles(@PathVariable("id") Long id, @Valid
                                                                     @RequestBody LibraryRequest libraryRequest) {
         LibraryResponse response = libraryService.updateFileLinkInLibrary(libraryRequest, id);
         ApiResponse<LibraryResponse> apiResponse = ApiResponse.<LibraryResponse>builder()
