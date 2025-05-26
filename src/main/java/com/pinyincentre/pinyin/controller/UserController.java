@@ -93,4 +93,15 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(apiResponse);
     }
+
+    @PostMapping("/create-teacher-account")
+    public ResponseEntity<ApiResponse<UserResponse>> createTeacherAccount(@RequestBody @Valid UserRequest userRequest) throws IOException {
+        UserResponse userResponse = userService.createTeacherAccount(userRequest);
+        ApiResponse<UserResponse> apiResponse = ApiResponse.<UserResponse>builder()
+                .status(HttpStatus.OK.value())
+                .message(ErrorCode.SUCCESS.getMessage())
+                .result(userResponse)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
 }
