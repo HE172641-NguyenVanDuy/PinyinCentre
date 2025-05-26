@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
             user.setStatus(UserStatus.ACTIVE.getCode());
 
             // set role
-            Role role = roleRepository.findById("CENTRE_OWNER")
+            Role role = roleRepository.findById("STUDENT")
                     .orElseThrow(() -> new RuntimeException("Role 'STUDENT' not found in DB"));
 
             user.setRoles(Set.of(role));
@@ -149,6 +149,16 @@ public class UserServiceImpl implements UserService {
           () -> new AppException(ErrorCode.NOT_FOUND)
         );
         return userMapper.toUserResponse(user);
+    }
+
+    @Override
+    public List<UserResponseProjection> getUserByRole(String role, Integer pageSize, int currentPage) {
+        if (pageSize == null || pageSize < 1) {
+            pageSize = PAGE_SIZE;
+        }
+        log.info("Current page: {}, page size: {}", currentPage, pageSize);
+        int offset = (currentPage - 1) * pageSize;
+        return userRepository.getListUserByRole(role,pageSize , offset);
     }
 
 
