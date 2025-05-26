@@ -9,7 +9,6 @@ import com.pinyincentre.pinyin.exception.AppException;
 import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.repository.RoleRepository;
 import com.pinyincentre.pinyin.repository.UserRepository;
-import com.pinyincentre.pinyin.service.email.EmailService;
 import com.pinyincentre.pinyin.service.utils.RandomStringGenerator;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +32,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private EmailService emailService;
+//    @Autowired
+//    private EmailService emailService;
 
     @Autowired
     private UserMapper userMapper;
@@ -76,7 +75,7 @@ public class UserServiceImpl implements UserService {
             //passwordGenerate = RandomStringGenerator.generate();
             passwordGenerate = testPass;
             user.setPassword(passwordEncoder.encode(passwordGenerate));
-            emailService.emailVerification(user.getEmail(), user);
+            //emailService.emailVerification(user.getEmail(), user);
 //            message = ErrorCode.CREATE_USER.getMessage();
 //            log.warn(message);
         } else {
