@@ -151,6 +151,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public List<UserResponseProjection> getUserByRole(String role, Integer pageSize, int currentPage) {
         if (pageSize == null || pageSize < 1) {
@@ -159,6 +160,52 @@ public class UserServiceImpl implements UserService {
         log.info("Current page: {}, page size: {}", currentPage, pageSize);
         int offset = (currentPage - 1) * pageSize;
         return userRepository.getListUserByRole(role,pageSize , offset);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Override
+    public UserResponse createTeacherAccount(UserRequest request) throws IOException {
+        String testPass = "12345678";
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        String passwordGenerate;
+        boolean existUsername = false;
+        boolean existEmail = false;
+        String message;
+        User user;
+        if(userRepository.existsByUsername(request.getUsername())) {
+            existUsername = true;
+        }
+        if(userRepository.existsByEmail(request.getEmail())) {
+            existEmail = true;
+        }
+        if(!existUsername && !existEmail) {
+            user = userMapper.toUser(request);
+            user.setStatus(UserStatus.ACTIVE.getCode());
+
+            // set role
+            Role role = roleRepository.findById("TEACHER")
+                    .orElseThrow(() -> new RuntimeException("Role 'TEACHER' not found in DB"));
+
+            user.setRoles(Set.of(role));
+
+            // hash password
+            //passwordGenerate = RandomStringGenerator.generate();
+            passwordGenerate = testPass;
+            user.setPassword(passwordEncoder.encode(passwordGenerate));
+            //emailService.emailVerification(user.getEmail(), user);
+//            message = ErrorCode.CREATE_USER.getMessage();
+//            log.warn(message);
+        } else {
+            if(existEmail) {
+                message = ErrorCode.EXIST_EMAIL.getMessage();
+                log.warn(message);
+            } else {
+                message = ErrorCode.EXIST_USERNAME.getMessage();
+                log.warn(message);
+            }
+            return null;
+        }
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
 

@@ -23,6 +23,7 @@ public interface UserService {
 
     List<UserResponseProjection> getUserByRole(String role, Integer pageSize, int currentPage);
 
+    UserResponse createTeacherAccount(UserRequest request) throws IOException;
     //List<UserResponse> getAllUsersNotActive();
 
 

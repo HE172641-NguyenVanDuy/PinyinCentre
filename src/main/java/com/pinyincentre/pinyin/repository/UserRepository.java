@@ -68,7 +68,7 @@ public interface UserRepository extends JpaRepository<User,String> {
         U.status AS status,
         U.address AS address    
         FROM USERS U JOIN user_roles R ON U.id = R.user_id
-                 WHERE R.role_name = :role
+                 WHERE R.role_name = :role AND (is_delete = 0 OR is_delete IS NULL) AND Status = 1
          ORDER BY created_date, username DESC 
         LIMIT :limit OFFSET :offset
     """, nativeQuery = true)
