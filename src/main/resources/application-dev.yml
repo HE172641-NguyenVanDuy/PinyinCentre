@@ -5,9 +5,9 @@ spring:
     allow-bean-definition-overriding: true
   devtools:
     add-properties: true
-  sendgrid:
-    api-key: ${SENDGRID_API_KEY}
-    from-email: duynguyencoder154@gmail.com
+#  sendgrid:
+#    api-key: ${SENDGRID_API_KEY}
+#    from-email: duynguyencoder154@gmail.com
 jwt:
   signerKey: UGdbTz3YkVWozpUVwBwql2icrmDK+/jzQBMRFodzNj32RNNf2VCRFTac0CC9ePil
   valid-duration: 3600 # in second
