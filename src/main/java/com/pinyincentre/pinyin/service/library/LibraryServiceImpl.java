@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class LibraryServiceImpl implements LibraryService{
     @Autowired
     private LibraryMapper libraryMapper;
 
+    @PreAuthorize("hasAuthority('CREATE_DOCUMENTS')")
     @Override
     public LibraryResponse createFileLinkInLibrary(LibraryRequest libraryRequest) {
         log.info("Create file link in library");
@@ -40,6 +42,7 @@ public class LibraryServiceImpl implements LibraryService{
         return null;
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_DOCUMENTS')")
     @Transactional
     @Override
     public LibraryResponse updateFileLinkInLibrary(LibraryRequest libraryRequest, Long id) {
@@ -54,6 +57,7 @@ public class LibraryServiceImpl implements LibraryService{
         return libraryMapper.toLibraryResponse(savedLibrary);
     }
 
+    @PreAuthorize("hasAuthority('REMOVE_DOCUMENTS')")
     @Override
     public LibraryResponse deleteFileInLibrary(Long id) {
         Library library = libraryRepository.findById(id).orElseThrow(
@@ -66,6 +70,7 @@ public class LibraryServiceImpl implements LibraryService{
         return libraryMapper.toLibraryResponse(updatedLibrary);
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_DOCUMENTS')")
     @Override
     public LibraryResponse getFileInLibraryById(Long id) {
         Library library = libraryRepository.findById(id).orElseThrow(

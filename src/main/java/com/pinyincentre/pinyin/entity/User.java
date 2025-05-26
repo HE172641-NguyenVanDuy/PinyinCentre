@@ -1,12 +1,11 @@
 package com.pinyincentre.pinyin.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -45,4 +44,14 @@ public class User extends UUIDBaseEntity implements Serializable {
     @Column(name="status")
     private int status;
 
+    @Column(name="address")
+    private String address;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_roles", // bảng trung gian
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_name")
+    )
+    private Set<Role> roles;
 }

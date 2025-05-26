@@ -5,6 +5,7 @@ import lombok.*;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,4 +25,7 @@ public class UserResponse {
     private Timestamp createDate;
     private Timestamp expireDate;
     private String status;
+    private String address;
+
+    private Set<RoleResponse> roles;
 }

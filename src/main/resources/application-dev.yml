@@ -1,6 +1,8 @@
 spring:
 #  profiles:
 #    active: dev
+  main:
+    allow-bean-definition-overriding: true
   devtools:
     add-properties: true
   sendgrid:
@@ -8,3 +10,5 @@ spring:
     from-email: duynguyencoder154@gmail.com
 jwt:
   signerKey: UGdbTz3YkVWozpUVwBwql2icrmDK+/jzQBMRFodzNj32RNNf2VCRFTac0CC9ePil
+  valid-duration: 3600 # in second
+  refreshable-duration: 36000 # in seconds

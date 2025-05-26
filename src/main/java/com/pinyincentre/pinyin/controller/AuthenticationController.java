@@ -1,7 +1,9 @@
 package com.pinyincentre.pinyin.controller;
 
+import com.nimbusds.jose.JOSEException;
 import com.pinyincentre.pinyin.dto.request.AuthenticationRequest;
 import com.pinyincentre.pinyin.dto.request.IntrospectRequest;
+import com.pinyincentre.pinyin.dto.request.LogoutRequest;
 import com.pinyincentre.pinyin.dto.response.ApiResponse;
 import com.pinyincentre.pinyin.dto.response.AuthenticationResponse;
 import com.pinyincentre.pinyin.dto.response.IntrospectResponse;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("auth")
@@ -36,6 +40,12 @@ public class AuthenticationController {
         return ApiResponse.<IntrospectResponse>builder()
                 .result(result)
                 .build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder().build();
     }
 
 }

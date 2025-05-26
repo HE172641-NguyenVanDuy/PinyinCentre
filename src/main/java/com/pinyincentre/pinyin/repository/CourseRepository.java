@@ -13,7 +13,7 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, String> {
 
     @Query(value = """
-    SELECT c.id, c.course_name, c.created_date, c.updated_date, c.slot_quantity
+    SELECT c.id, c.course_name, c.created_date, c.slot_quantity
     FROM courses c
     WHERE c.is_delete = 0
     ORDER BY c.created_date DESC
@@ -23,7 +23,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
                                                           @Param("offset") int offset);
 
     @Query(value = """
-    SELECT c.id, c.course_name, c.created_date, c.updated_date, c.slot_quantity
+    SELECT c.id, c.course_name, c.created_date, c.slot_quantity
     FROM courses c
     WHERE c.id = :id
     """, nativeQuery = true)

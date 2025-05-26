@@ -5,6 +5,7 @@ import com.pinyincentre.pinyin.dto.request.UserUpdateRequest;
 import com.pinyincentre.pinyin.dto.response.ApiResponse;
 import com.pinyincentre.pinyin.dto.response.UserResponse;
 import com.pinyincentre.pinyin.exception.ErrorCode;
+import com.pinyincentre.pinyin.service.user.UserResponseProjection;
 import com.pinyincentre.pinyin.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +26,10 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/get-users-active")
-    public ResponseEntity<ApiResponse<List<UserResponse>>> listUsersActive(@RequestParam(defaultValue = "1") int page,
+    public ResponseEntity<ApiResponse<List<UserResponseProjection>>> listUsersActive(@RequestParam(defaultValue = "1") int page,
                                                                            @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        List<UserResponse> lstUsers = userService.getAllUsersActive(pageSize, page);
-        ApiResponse<List<UserResponse>> apiResponse = ApiResponse.<List<UserResponse>>builder()
+        List<UserResponseProjection> lstUsers = userService.getAllUsersActive(pageSize, page);
+        ApiResponse<List<UserResponseProjection>> apiResponse = ApiResponse.<List<UserResponseProjection>>builder()
                 .status(HttpStatus.OK.value())
                 .message(ErrorCode.SUCCESS.getMessage())
                 .result(lstUsers)

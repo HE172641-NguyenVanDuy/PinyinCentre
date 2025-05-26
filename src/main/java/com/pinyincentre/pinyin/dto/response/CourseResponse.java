@@ -17,6 +17,8 @@ public class CourseResponse {
 
     private String courseName;
 
+    private Timestamp createdDate;
+
     private int slotNumber;
 //    private Timestamp startTime;
 //
