@@ -54,6 +54,29 @@ public interface UserRepository extends JpaRepository<User,String> {
 
 
     @Query(value = """
+        SELECT 
+        U.id AS id,
+        U.username AS username,
+        U.email AS email,
+        U.phone_number AS phoneNumber,
+        U.dob AS dob,
+        U.cic AS cic,
+        U.full_name AS fullName,
+        U.updated_date AS updateDate,
+        U.created_date AS createDate,
+        U.expired_date AS expireDate,
+        U.status AS status,
+        U.address AS address    
+        FROM USERS U JOIN user_roles R ON U.id = R.user_id
+                 WHERE R.role_name = :role
+         ORDER BY created_date, username DESC 
+        LIMIT :limit OFFSET :offset
+    """, nativeQuery = true)
+    List<UserResponseProjection> getListUserByRole(@Param("role") String role, @Param("limit") int limit,
+                                                   @Param("offset") int offset);
+
+
+    @Query(value = """
     SELECT u.full_name FROM USERS u WHERE u.id = :id
     """,nativeQuery = true)
     String findFullNameById(@Param("id") String id);

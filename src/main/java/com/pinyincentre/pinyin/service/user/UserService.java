@@ -21,6 +21,8 @@ public interface UserService {
 
     UserResponse getUserById(String uid);
 
+    List<UserResponseProjection> getUserByRole(String role, Integer pageSize, int currentPage);
+
     //List<UserResponse> getAllUsersNotActive();
 
 
