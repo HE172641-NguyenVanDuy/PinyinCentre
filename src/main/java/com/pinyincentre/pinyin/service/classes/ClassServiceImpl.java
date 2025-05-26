@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,6 +54,7 @@ public class ClassServiceImpl implements ClassService {
         return response;
     }
 
+    @PreAuthorize("hasRole('CENTRE_OWNER')")
     @Override
     public List<Object[]> getAllClassesPagination(Integer pageSize, int currentPage) {
         log.info("Current page: {}, page size: {}", currentPage, pageSize);
@@ -64,6 +66,7 @@ public class ClassServiceImpl implements ClassService {
         return page.getContent();
     }
 
+    @PreAuthorize("hasRole('CENTRE_OWNER')")
     @Override
     public ClassResponse createClass(ClassRequest classRequest) {
         String fullName;
@@ -94,6 +97,7 @@ public class ClassServiceImpl implements ClassService {
         return classResponse;
     }
 
+    @PreAuthorize("hasRole('CENTRE_OWNER')")
     @Override
     public ClassResponse updateClass(ClassRequest classRequest, String id) {
         String fullName;
@@ -124,6 +128,7 @@ public class ClassServiceImpl implements ClassService {
         return classResponse;
     }
 
+    @PreAuthorize("hasRole('CENTRE_OWNER')")
     @Override
     public ClassResponse deleteClass(String id) {
         String fullName;

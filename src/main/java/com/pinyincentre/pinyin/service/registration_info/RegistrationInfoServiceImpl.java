@@ -12,6 +12,7 @@ import com.pinyincentre.pinyin.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class RegistrationInfoServiceImpl implements RegistrationInfoService {
     @Autowired
     private UserService userService;
 
+    @PreAuthorize("hasRole('CENTRE_OWNER')")
     @Override
     public RegistrationInfoResponse getRegistrationInfoById(String id) {
         RegistrationInfoResponse response = registrationInfoRepository.findByUUID(id);
@@ -62,6 +64,7 @@ public class RegistrationInfoServiceImpl implements RegistrationInfoService {
 //        return ErrorCode.FAIL_CHANGE_IS_REGISTERED.getMessage();
 //    }
 
+    @PreAuthorize("hasRole('CENTRE_OWNER')")
     @Transactional
     @Override
     public String changeToRegistered(String id) throws IOException {
@@ -105,6 +108,7 @@ public class RegistrationInfoServiceImpl implements RegistrationInfoService {
         }
     }
 
+    @PreAuthorize("hasRole('CENTRE_OWNER')")
     @Override
     public List<RegistrationInfoResponse> getAllRegistrationInfoNotRegistered(Integer pageSize, int currentPage) {
         if (pageSize == null || pageSize < 1) {

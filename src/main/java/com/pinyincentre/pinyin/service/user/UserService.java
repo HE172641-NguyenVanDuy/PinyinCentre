@@ -17,7 +17,7 @@ public interface UserService {
 
     String banUser(String uid);
 
-    List<UserResponse> getAllUsersActive(Integer pageSize, int currentPage);
+    List<UserResponseProjection> getAllUsersActive(Integer pageSize, int currentPage);
 
     UserResponse getUserById(String uid);
 

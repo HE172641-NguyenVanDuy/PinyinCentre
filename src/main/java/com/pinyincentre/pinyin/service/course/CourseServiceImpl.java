@@ -9,6 +9,7 @@ import com.pinyincentre.pinyin.repository.CourseRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseMapper courseMapper;
+
 
     @Override
     public List<CourseResponse> getAllCoursesActive(Integer pageSize, int currentPage) {
@@ -45,6 +47,7 @@ public class CourseServiceImpl implements CourseService {
         return response;
     }
 
+    @PreAuthorize("hasRole('CENTRE_OWNER')")
     @Transactional
     @Override
     public String createCourse(CourseRequest request) {

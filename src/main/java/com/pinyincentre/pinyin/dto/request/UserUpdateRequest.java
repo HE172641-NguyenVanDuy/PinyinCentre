@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,4 +38,7 @@ public class UserUpdateRequest {
 
     private String cic;
 
+    private String address;
+
+    //List<String> roles;
 }

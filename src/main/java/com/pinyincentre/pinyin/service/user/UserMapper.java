@@ -23,7 +23,8 @@ public interface UserMapper {
             @Mapping(source = "createdDate", target = "createDate"),
             @Mapping(source = "updatedDate", target = "updateDate"),
             @Mapping(source = "expiredDate", target = "expireDate"),
-            @Mapping(source = "dob", target = "dob")
+            @Mapping(source = "dob", target = "dob"),
+            @Mapping(source = "address", target = "address")
     })
     UserResponse toUserResponse(User user);
 
@@ -34,7 +35,13 @@ public interface UserMapper {
 //            @Mapping(source = "expiredDate", target = "expireDate"),
 //            @Mapping(source = "dob", target = "dob")
 //})
-    @Mapping(source = "dob", target = "dob", qualifiedByName = "toLocalDateTime")
+
+
+    @Mappings({
+            @Mapping(source = "dob", target = "dob", qualifiedByName = "toLocalDateTime"),
+            @Mapping(target = "address", source = "address"),
+            @Mapping(target = "roles", ignore = true)
+    })
     void updateUserFromRequest(UserUpdateRequest request, @MappingTarget User user);
 
     default String mapStatus(int statusCode) {
