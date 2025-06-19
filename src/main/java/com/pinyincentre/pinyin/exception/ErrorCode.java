@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 public enum ErrorCode {
-
+    DELETE_FAIL(7000,"Xóa thất bại", HttpStatus.BAD_REQUEST),
     SAVE_CLASS_ERROR(5002, "Lớp không được lưu thành công !", HttpStatus.BAD_REQUEST),
     CLASS_NOT_FOUND(5001, "Không tìm thấy lớp !", HttpStatus.BAD_REQUEST),
     BAN_USER_FAIL(4007, "Giới hạn tài khoản không thành công!", HttpStatus.OK),

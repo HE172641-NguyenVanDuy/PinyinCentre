@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user")
 @Slf4j(topic = "USER-CONTROLLER")
+@CrossOrigin(origins = "https://www.pinyincentre.com")
 public class UserController {
 
     @Autowired

@@ -26,6 +26,19 @@ public class UserRequest {
     @Size(min = 2, max = 50, message = "Họ và tên phải từ 2-50 ký tự")
     String fullName;
 
+    @Past(message = "Ngày sinh không thể là ngày trong tương lai")
+    private LocalDate dob;
+
+    @Size(max = 50, message = "CIC tối đa 50 ký tự")
+    private String cic;
+
+    @Size(max = 255, message = "Địa chỉ tối đa 255 ký tự")
+    private String address;
+
+    private Boolean gender;
+
+    private Integer role;
+
 //    @Past(message = "Ngày sinh không thể là ngày trong tương lai")
 //    LocalDate dob;
 

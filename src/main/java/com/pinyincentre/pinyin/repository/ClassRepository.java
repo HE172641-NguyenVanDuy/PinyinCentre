@@ -16,7 +16,7 @@ import java.util.UUID;
 @Repository
 public interface ClassRepository extends JpaRepository<Classroom, UUID> {
 
-    @Query(value = "SELECT c.className AS className, co.courseName AS courseName, \n" +
+    @Query(value = "SELECT c.name AS className, co.courseName AS courseName, \n" +
             "       u.fullName AS teacherName, c.startDate AS startDate, \n" +
             "       c.endDate AS endDate, c.maxStudents AS maxStudents " +
             " FROM Classroom c JOIN Course co ON c.courseId = co.id " +

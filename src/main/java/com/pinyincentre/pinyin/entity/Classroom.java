@@ -1,8 +1,6 @@
 package com.pinyincentre.pinyin.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
@@ -19,7 +17,7 @@ import java.time.LocalDateTime;
 public class Classroom extends UUIDBaseEntity implements Serializable {
 
     @Column(name = "class_name")
-    private String className;
+    private String name;
 
     @Column(name = "course_id")
     private String courseId;
@@ -35,4 +33,8 @@ public class Classroom extends UUIDBaseEntity implements Serializable {
 
     @Column(name = "max_students")
     private int maxStudents;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "teacher_id", insertable = false, updatable = false)
+    private User teacher;
 }
