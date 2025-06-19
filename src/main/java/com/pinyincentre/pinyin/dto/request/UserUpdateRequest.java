@@ -40,5 +40,7 @@ public class UserUpdateRequest {
 
     private String address;
 
+    private Boolean gender;
+
     //List<String> roles;
 }
