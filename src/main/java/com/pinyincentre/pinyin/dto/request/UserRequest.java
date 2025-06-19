@@ -37,7 +37,7 @@ public class UserRequest {
 
     private Boolean gender;
 
-    private Integer role;
+    //private Integer role;
 
 //    @Past(message = "Ngày sinh không thể là ngày trong tương lai")
 //    LocalDate dob;
