@@ -40,4 +40,11 @@ public interface RegistrationInfoRepository extends JpaRepository<RegistrationIn
     """,nativeQuery = true)
     RegistrationInfoResponse findByUUID(@Param("uuid") String uuid);
 
+    @Modifying
+    @Query(value = """
+    UPDATE registration_info 
+    SET is_delete = 1, updated_date = CURRENT_TIMESTAMP 
+    WHERE id = :id
+    """, nativeQuery = true)
+    int softDeleteById(@Param("id") String id);
 }

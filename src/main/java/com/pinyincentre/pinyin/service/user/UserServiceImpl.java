@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService {
         return message;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public List<UserResponseProjection> getAllUsersActive(Integer pageSize, int currentPage) {
         if (pageSize == null || pageSize < 1) {
@@ -151,7 +151,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public List<UserResponseProjection> getUserByRole(String role, Integer pageSize, int currentPage) {
         if (pageSize == null || pageSize < 1) {
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.getListUserByRole(role,pageSize , offset);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public UserResponse createTeacherAccount(UserRequest request) throws IOException {
         String testPass = "12345678";

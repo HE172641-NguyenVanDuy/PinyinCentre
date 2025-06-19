@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/library")
 @Slf4j(topic = "LIBRARY-CONTROLLER")
+@CrossOrigin(origins = "https://www.pinyincentre.com")
 public class LibraryController {
 
     @Autowired

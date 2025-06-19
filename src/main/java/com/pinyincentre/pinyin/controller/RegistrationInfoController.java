@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/registration-info")
+@CrossOrigin(origins = "https://www.pinyincentre.com")
 @Slf4j(topic = "REGISTRATION-CONTROLLER")
 public class RegistrationInfoController {
 
@@ -55,6 +56,19 @@ public class RegistrationInfoController {
         log.info("Update Registration Info: {}", id);
         String response = registrationInfoService.changeToRegistered(id);
         log.info("Registration Response: {}", response);
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message(ErrorCode.SUCCESS.getMessage())
+                .result(response)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteRegistrationInfo(@PathVariable("id") String id) {
+        log.info("Delete Registration Info: {}", id);
+        String response = registrationInfoService.softDeleteRegistrationInfo(id);
+        log.info("Delete Response: {}", response);
         ApiResponse<String> apiResponse = ApiResponse.<String>builder()
                 .status(HttpStatus.OK.value())
                 .message(ErrorCode.SUCCESS.getMessage())

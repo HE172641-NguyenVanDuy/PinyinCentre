@@ -33,7 +33,7 @@ public class RegistrationInfoServiceImpl implements RegistrationInfoService {
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("hasRole('CENTRE_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public RegistrationInfoResponse getRegistrationInfoById(String id) {
         RegistrationInfoResponse response = registrationInfoRepository.findByUUID(id);
@@ -64,7 +64,7 @@ public class RegistrationInfoServiceImpl implements RegistrationInfoService {
 //        return ErrorCode.FAIL_CHANGE_IS_REGISTERED.getMessage();
 //    }
 
-    @PreAuthorize("hasRole('CENTRE_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Transactional
     @Override
     public String changeToRegistered(String id) throws IOException {
@@ -108,7 +108,7 @@ public class RegistrationInfoServiceImpl implements RegistrationInfoService {
         }
     }
 
-    @PreAuthorize("hasRole('CENTRE_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public List<RegistrationInfoResponse> getAllRegistrationInfoNotRegistered(Integer pageSize, int currentPage) {
         if (pageSize == null || pageSize < 1) {
@@ -118,5 +118,19 @@ public class RegistrationInfoServiceImpl implements RegistrationInfoService {
         int offset = (currentPage - 1) * pageSize; // Tính offset
 //        log.info("Size list: {}", registrationInfoRepository.getListNotRegistratedInfoWithPagination(pageSize, offset).size());
         return registrationInfoRepository.getListNotRegistratedInfoWithPagination(pageSize, offset);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
+    @Override
+    @Transactional
+    public String softDeleteRegistrationInfo(String id) {
+        int count = registrationInfoRepository.softDeleteById(id);
+        log.info("Number of deleted row: {}", count);
+        if (count > 0) {
+            return ErrorCode.SUCCESS.getMessage();
+        } else {
+            log.warn("Soft delete failed for id: {}", id);
+            throw new AppException(ErrorCode.DELETE_FAIL);
+        }
     }
 }

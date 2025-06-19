@@ -76,6 +76,8 @@ public interface UserRepository extends JpaRepository<User,String> {
                                                    @Param("offset") int offset);
 
 
+    List<User> findByRolesName(String roleName);
+
     @Query(value = """
     SELECT u.full_name FROM USERS u WHERE u.id = :id
     """,nativeQuery = true)

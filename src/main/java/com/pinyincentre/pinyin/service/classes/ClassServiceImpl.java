@@ -54,7 +54,7 @@ public class ClassServiceImpl implements ClassService {
         return response;
     }
 
-    @PreAuthorize("hasRole('CENTRE_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public List<Object[]> getAllClassesPagination(Integer pageSize, int currentPage) {
         log.info("Current page: {}, page size: {}", currentPage, pageSize);
@@ -66,7 +66,7 @@ public class ClassServiceImpl implements ClassService {
         return page.getContent();
     }
 
-    @PreAuthorize("hasRole('CENTRE_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public ClassResponse createClass(ClassRequest classRequest) {
         String fullName;
@@ -88,7 +88,7 @@ public class ClassServiceImpl implements ClassService {
 
         classResponse.setTeacherName(fullName);
         classResponse.setCourseName(courseName);
-        classResponse.setClassName(savedClassroom.getClassName());
+        classResponse.setClassName(savedClassroom.getName());
         classResponse.setMaxStudents(savedClassroom.getMaxStudents());
         classResponse.setStartDate(classroomMapper.map(savedClassroom.getStartDate()));
         classResponse.setEndDate(classroomMapper.map(savedClassroom.getEndDate()));
@@ -97,7 +97,7 @@ public class ClassServiceImpl implements ClassService {
         return classResponse;
     }
 
-    @PreAuthorize("hasRole('CENTRE_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public ClassResponse updateClass(ClassRequest classRequest, String id) {
         String fullName;
@@ -119,7 +119,7 @@ public class ClassServiceImpl implements ClassService {
 
         classResponse.setTeacherName(fullName);
         classResponse.setCourseName(courseName);
-        classResponse.setClassName(savedClassroom.getClassName());
+        classResponse.setClassName(savedClassroom.getName());
         classResponse.setMaxStudents(savedClassroom.getMaxStudents());
         classResponse.setStartDate(classroomMapper.map(savedClassroom.getStartDate()));
         classResponse.setEndDate(classroomMapper.map(savedClassroom.getEndDate()));
@@ -128,7 +128,7 @@ public class ClassServiceImpl implements ClassService {
         return classResponse;
     }
 
-    @PreAuthorize("hasRole('CENTRE_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public ClassResponse deleteClass(String id) {
         String fullName;
@@ -150,7 +150,7 @@ public class ClassServiceImpl implements ClassService {
 
         classResponse.setTeacherName(fullName);
         classResponse.setCourseName(courseName);
-        classResponse.setClassName(savedClassroom.getClassName());
+        classResponse.setClassName(savedClassroom.getName());
         classResponse.setMaxStudents(savedClassroom.getMaxStudents());
         classResponse.setStartDate(classroomMapper.map(savedClassroom.getStartDate()));
         classResponse.setEndDate(classroomMapper.map(savedClassroom.getEndDate()));

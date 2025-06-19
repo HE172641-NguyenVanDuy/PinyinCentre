@@ -19,11 +19,17 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -55,6 +61,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/log-in").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/token", "/auth/introspect", "/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/registration-info/create").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/gemini/generate-response").permitAll()
 
                         .anyRequest().authenticated()
                 )
@@ -65,7 +72,23 @@ public class SecurityConfig {
                 )
                 .csrf(csrf -> csrf.disable());
 
+        // ✅ Thêm filter CORS đúng vị trí và đúng import
+        httpSecurity.addFilterBefore(new CorsFilter(corsConfigurationSource()), UsernamePasswordAuthenticationFilter.class);
+
         return httpSecurity.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("https://www.pinyincentre.com"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/api/**", config);
+        return source;
     }
 
     @Bean

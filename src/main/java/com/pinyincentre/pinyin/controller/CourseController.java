@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/course")
 @Slf4j(topic = "COURSE-CONTROLLER")
+@CrossOrigin(origins = "https://www.pinyincentre.com")
 public class CourseController {
 
     @Autowired

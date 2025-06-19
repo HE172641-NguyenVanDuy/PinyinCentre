@@ -14,4 +14,5 @@ public interface RegistrationInfoService {
     String changeToRegistered(String id) throws IOException;
     RegistrationInfoResponse createRegistrationInfo(RegistrationInfoRequest request);
     List<RegistrationInfoResponse> getAllRegistrationInfoNotRegistered(Integer pageSize, int offset);
+    String softDeleteRegistrationInfo(String id);
 }

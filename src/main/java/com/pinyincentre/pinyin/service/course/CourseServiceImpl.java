@@ -47,7 +47,7 @@ public class CourseServiceImpl implements CourseService {
         return response;
     }
 
-    @PreAuthorize("hasRole('CENTRE_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Transactional
     @Override
     public String createCourse(CourseRequest request) {
