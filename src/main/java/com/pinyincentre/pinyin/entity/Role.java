@@ -2,6 +2,7 @@ package com.pinyincentre.pinyin.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -13,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@EntityListeners(AuditingEntityListener.class)
 public class Role implements Serializable {
 
     @Id

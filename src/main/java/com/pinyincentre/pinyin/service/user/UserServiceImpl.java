@@ -13,6 +13,7 @@ import com.pinyincentre.pinyin.service.utils.RandomStringGenerator;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j(topic = "USER-SERVICE")
@@ -206,6 +208,22 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    @Cacheable(value = "userRoles", key = "#username")
+    @Override
+    public Set<String> getRoleNames(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getRoles()
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public User getUserByUserName(String userName) {
+        return userRepository.getFirstByUsername(userName);
     }
 
 

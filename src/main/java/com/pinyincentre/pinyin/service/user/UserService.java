@@ -3,10 +3,12 @@ package com.pinyincentre.pinyin.service.user;
 import com.pinyincentre.pinyin.dto.request.UserRequest;
 import com.pinyincentre.pinyin.dto.request.UserUpdateRequest;
 import com.pinyincentre.pinyin.dto.response.UserResponse;
+import com.pinyincentre.pinyin.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface UserService {
@@ -26,5 +28,8 @@ public interface UserService {
     UserResponse createTeacherAccount(UserRequest request) throws IOException;
     //List<UserResponse> getAllUsersNotActive();
 
+    Set<String> getRoleNames(String username);
+
+    User getUserByUserName(String userName);
 
 }

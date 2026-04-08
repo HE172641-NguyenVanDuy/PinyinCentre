@@ -21,6 +21,8 @@ public interface UserRepository extends JpaRepository<User,String> {
    // @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM Users WHERE username = :userName", nativeQuery = true)
     boolean existsByUsername( String userName);
 
+    User getFirstByUsername(String username);
+
     @Modifying
     @Query(value = "UPDATE USERS u SET u.status = :status WHERE u.id = :id", nativeQuery = true)
     int changeStatusUserById(@Param("id") String id,@Param("status") int status);

@@ -5,10 +5,43 @@ spring:
     allow-bean-definition-overriding: true
   devtools:
     add-properties: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 608139547919-ukap17ker9vij0pec2si6bakk41ru99t.apps.googleusercontent.com
+            client-secret: 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
+            scope: openid, email, profile
+            #redirect-uri: "http://localhost:8080/api/auth/login/oauth2/code/google"
+            redirect-uri: http://localhost:5173/callback
+            authorization-grant-type: authorization_code
+            client-name: Google
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+cache:
+  default-ttl-in-seconds: 5
+  redis:
+    key:
+      prefix:
+        access: "auth:access:"
+        refresh: "auth:refresh:"
+        logout: "auth:logout:"
+        reset: "auth:reset:"
+        active: "auth:active"
+        payment: "payment:out"
 #  sendgrid:
 #    api-key: ${SENDGRID_API_KEY}
 #    from-email: duynguyencoder154@gmail.com
 jwt:
+  secret: "7367566B59703KJL93367639792F423F45288282B488KL625165DS68576D5A7112348267"
+  access-token-expiration: 3600000
+  refresh-token-expiration: 604800000
   signerKey: UGdbTz3YkVWozpUVwBwql2icrmDK+/jzQBMRFodzNj32RNNf2VCRFTac0CC9ePil
   valid-duration: 3600 # in second
   refreshable-duration: 36000 # in seconds
