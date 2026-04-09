@@ -267,9 +267,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         newUser.setUsername(userInfo.getEmail().split("@")[0]);
         newUser.setEmail(userInfo.getEmail());
         newUser.setFullName(userInfo.getName());
+        newUser.setPassword(""); // Provide a placeholder password
+        newUser.setEnabled(true);
         // set role if needed
         Set<RoleEntity> roles = new HashSet<>();
-        roles.add(roleRepository.getByName(RoleType.ROLE_USER.name()));
+        RoleEntity studentRole = roleRepository.getByName(RoleType.ROLE_STUDENT.name());
+        if (studentRole == null) {
+            studentRole = new RoleEntity();
+            studentRole.setName(RoleType.ROLE_STUDENT.name());
+            studentRole.setDescription("Student Role");
+            studentRole = roleRepository.save(studentRole);
+        }
+        roles.add(studentRole);
         newUser.setRoleEntities(roles);
 //        newUser.setAccountBalance(0.0);
         return userRepository.save(newUser);
