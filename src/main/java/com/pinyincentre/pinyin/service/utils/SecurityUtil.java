@@ -1,6 +1,6 @@
 package com.pinyincentre.pinyin.service.utils;
 
-import com.pinyincentre.pinyin.entity.User;
+import com.pinyincentre.pinyin.entity.UserEntity;
 import com.pinyincentre.pinyin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -18,7 +18,7 @@ public class SecurityUtil {
     public boolean isCurrentUserId(String uid) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        Optional<User> userOpt = userRepository.findByUsername(username);
+        Optional<UserEntity> userOpt = userRepository.findByUsername(username);
         return userOpt.map(user -> user.getId().equals(uid)).orElse(false);
     }
 }

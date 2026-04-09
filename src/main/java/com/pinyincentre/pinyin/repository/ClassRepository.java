@@ -20,7 +20,7 @@ public interface ClassRepository extends JpaRepository<Classroom, UUID> {
             "       u.fullName AS teacherName, c.startDate AS startDate, \n" +
             "       c.endDate AS endDate, c.maxStudents AS maxStudents " +
             " FROM Classroom c JOIN Course co ON c.courseId = co.id " +
-            " JOIN User u ON c.teacherId = u.id " +
+            " JOIN UserEntity u ON c.teacherId = u.id " +
             " WHERE c.isDelete = :isDelete ORDER BY c.createdDate DESC ")
     Page<Object[]> findAllClassesByStatusPagination(@Param("isDelete") boolean status, Pageable pageable);
 

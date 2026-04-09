@@ -1,7 +1,6 @@
 package com.pinyincentre.pinyin.repository;
 
-import com.pinyincentre.pinyin.dto.response.UserResponse;
-import com.pinyincentre.pinyin.entity.User;
+import com.pinyincentre.pinyin.entity.UserEntity;
 import com.pinyincentre.pinyin.service.user.UserResponseProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,15 +12,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User,String> {
-    Optional<User> findByUsername(String username);
+public interface UserRepository extends JpaRepository<UserEntity,String> {
+    Optional<UserEntity> findByUsername(String username);
     //@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM Users WHERE email = :email", nativeQuery = true)
     boolean existsByEmail(String email);
 
    // @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM Users WHERE username = :userName", nativeQuery = true)
     boolean existsByUsername( String userName);
+    Optional<UserEntity> findByEmail(String email);
 
-    User getFirstByUsername(String username);
+    UserEntity getFirstByUsername(String username);
+    UserEntity getFirstByEmail(String email);
+    Optional<UserEntity> findFirstByUsernameIgnoreCaseOrEmailIgnoreCase(String username, String email);
 
     @Modifying
     @Query(value = "UPDATE USERS u SET u.status = :status WHERE u.id = :id", nativeQuery = true)
@@ -70,15 +72,15 @@ public interface UserRepository extends JpaRepository<User,String> {
         U.status AS status,
         U.address AS address    
         FROM USERS U JOIN user_roles R ON U.id = R.user_id
-                 WHERE R.role_name = :role AND (is_delete = 0 OR is_delete IS NULL) AND Status = 1
+                 WHERE R.role_name = :roleEntity AND (is_delete = 0 OR is_delete IS NULL) AND Status = 1
          ORDER BY created_date, username DESC 
         LIMIT :limit OFFSET :offset
     """, nativeQuery = true)
-    List<UserResponseProjection> getListUserByRole(@Param("role") String role, @Param("limit") int limit,
+    List<UserResponseProjection> getListUserByRole(@Param("roleEntity") String roleEntity, @Param("limit") int limit,
                                                    @Param("offset") int offset);
 
 
-    List<User> findByRolesName(String roleName);
+    List<UserEntity> findByRoleEntitiesName(String roleName);
 
     @Query(value = """
     SELECT u.full_name FROM USERS u WHERE u.id = :id

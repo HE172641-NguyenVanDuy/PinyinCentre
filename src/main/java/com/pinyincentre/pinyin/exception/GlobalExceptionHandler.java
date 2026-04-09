@@ -1,5 +1,6 @@
 package com.pinyincentre.pinyin.exception;
 
+import com.pinyincentre.pinyin.dto.ResultInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -12,13 +13,21 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ResultInfo<?>> handleBusinessException(BusinessException ex) {
+        ResultInfo<?> response = ResultInfo.builder()
+                .status(400L)
+                .message(ex.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 
 //    @ExceptionHandler(value = AppException.class)
 //    public ResponseEntity<ApiResponse<Object>> handlingAppException(AppException exception) {

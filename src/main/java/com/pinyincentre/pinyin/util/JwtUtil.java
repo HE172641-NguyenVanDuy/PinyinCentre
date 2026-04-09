@@ -2,8 +2,8 @@ package com.pinyincentre.pinyin.util;
 
 import com.pinyincentre.pinyin.constant.AuthMessage;
 import com.pinyincentre.pinyin.dto.TokenResponse;
-import com.pinyincentre.pinyin.entity.Role;
-import com.pinyincentre.pinyin.entity.User;
+import com.pinyincentre.pinyin.entity.RoleEntity;
+import com.pinyincentre.pinyin.entity.UserEntity;
 import com.pinyincentre.pinyin.exception.AuthException;
 import com.pinyincentre.pinyin.exception.BusinessException;
 import com.pinyincentre.pinyin.repository.UserRepository;
@@ -103,8 +103,8 @@ public class JwtUtil {
                 .compact();
     }
 
-    public TokenResponse generateTokens(User user) {
-        String username = user.getUsername(); // Lấy username từ đối tượng user
+    public TokenResponse generateTokens(UserEntity userEntity) {
+        String username = userEntity.getUsername(); // Lấy username từ đối tượng user
 
         String accessKey = redisKeyUtil.getAccessTokenKey(username);
         String refreshKey = redisKeyUtil.getRefreshTokenKey(username);
@@ -119,7 +119,8 @@ public class JwtUtil {
                     cachedRefresh,
                     accessTokenExpiration / 1000,
                     refreshTokenExpiration / 1000,
-                    extractRoles(cachedAccess));
+                    extractRoles(cachedAccess),
+                    username);
         }
 
         logger.info("[CACHE MISS] Tạo token mới cho user: {}", username);
@@ -130,13 +131,13 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
 
 
-        claims.put("userId", user.getId());
-        List<String> roles = user.getRoles().stream()
-                .map(Role::getName)
+        claims.put("userId", userEntity.getId());
+        List<String> roles = userEntity.getRoleEntities().stream()
+                .map(RoleEntity::getName)
                 .toList();
         claims.put("roles", roles);
         System.out.println(roles);
-        logger.info("[ROLES] Đã thêm vào claims cho user {}: {}", user.getUsername(), claims.get("roles"));
+        logger.info("[ROLES] Đã thêm vào claims cho user {}: {}", userEntity.getUsername(), claims.get("roles"));
 
         String accessToken = generateAccessToken(username, claims);
         String refreshToken = generateRefreshToken(username);
@@ -149,7 +150,8 @@ public class JwtUtil {
                 refreshToken,
                 accessTokenExpiration / 1000,
                 refreshTokenExpiration / 1000,
-                extractRoles(accessToken));
+                extractRoles(accessToken),
+                username);
     }
 
     // Refresh access token bằng refresh token
@@ -170,12 +172,12 @@ public class JwtUtil {
 
             logger.info("[REFRESH] Tạo access token mới cho user: {}", username);
 
-            User user = userRepository.findByUsername(username)
+            UserEntity userEntity = userRepository.findByUsername(username)
                     .orElseThrow(() -> new BusinessException("Không tìm thấy người dùng"));
 //            BusinessProfileImageEntity image = businessProfileImageRepository.findFirstByBusinessProfile_UserIdAndCaption(user.getId(), "avatar");
 
             Map<String, Object> claims = new HashMap<>();
-            claims.put("roles", user.getRoles().stream().map(Role::getName).toList());
+            claims.put("roles", userEntity.getRoleEntities().stream().map(RoleEntity::getName).toList());
 
             String newAccessToken = generateAccessToken(username, claims);
 
@@ -186,7 +188,8 @@ public class JwtUtil {
                     refreshToken,
                     accessTokenExpiration / 1000,
                     refreshTokenExpiration / 1000,
-                    extractRoles(newAccessToken));
+                    extractRoles(newAccessToken),
+                    username);
 
         } catch (Exception e) {
             throw new BusinessException("Lỗi khi lấy refresh token: " + e.getMessage());

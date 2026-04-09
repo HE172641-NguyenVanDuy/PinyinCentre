@@ -2,6 +2,7 @@ package com.pinyincentre.pinyin.service.registration_info;
 
 import com.pinyincentre.pinyin.dto.request.RegistrationInfoRequest;
 import com.pinyincentre.pinyin.dto.request.UserRequest;
+import com.pinyincentre.pinyin.dto.response.RegistrationInfoProjection;
 import com.pinyincentre.pinyin.dto.response.RegistrationInfoResponse;
 import com.pinyincentre.pinyin.dto.response.UserResponse;
 import com.pinyincentre.pinyin.entity.RegistrationInfo;
@@ -36,12 +37,13 @@ public class RegistrationInfoServiceImpl implements RegistrationInfoService {
     @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public RegistrationInfoResponse getRegistrationInfoById(String id) {
-        RegistrationInfoResponse response = registrationInfoRepository.findByUUID(id);
-        log.info("getRegistrationInfoById: {}", response);
-        if(response == null) {
+        RegistrationInfoProjection projection = registrationInfoRepository.findByUUID(id);
+        if (projection == null) {
             log.warn("RegistrationInfo not found for id: {}", id);
             throw new AppException(ErrorCode.NOT_FOUND);
         }
+        RegistrationInfoResponse response = toResponse(projection);
+        log.info("getRegistrationInfoById: {}", response);
         return response;
     }
 
@@ -115,9 +117,21 @@ public class RegistrationInfoServiceImpl implements RegistrationInfoService {
             pageSize = PAGE_SIZE;
         }
         log.info("Current page: {}, page size: {}", currentPage, pageSize);
-        int offset = (currentPage - 1) * pageSize; // Tính offset
-//        log.info("Size list: {}", registrationInfoRepository.getListNotRegistratedInfoWithPagination(pageSize, offset).size());
-        return registrationInfoRepository.getListNotRegistratedInfoWithPagination(pageSize, offset);
+        int offset = (currentPage - 1) * pageSize;
+        List<RegistrationInfoProjection> projections = registrationInfoRepository.getListNotRegistratedInfoWithPagination(pageSize, offset);
+        return projections.stream().map(this::toResponse).collect(java.util.stream.Collectors.toList());
+    }
+
+    private RegistrationInfoResponse toResponse(RegistrationInfoProjection p) {
+        return RegistrationInfoResponse.builder()
+                .id(p.getId())
+                .fullName(p.getFullname())
+                .phoneNumber(p.getPhoneNumber())
+                .email(p.getEmail())
+                .courseName(p.getCourseName())
+                .createdDate(p.getCreatedDate())
+                .isRegistered(Boolean.TRUE.equals(p.getIsRegistered()))
+                .build();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")

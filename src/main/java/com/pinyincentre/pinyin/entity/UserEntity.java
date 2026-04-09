@@ -17,7 +17,7 @@ import java.util.Set;
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class User extends UUIDBaseEntity implements Serializable {
+public class UserEntity extends UUIDBaseEntity implements Serializable {
 
     @Column(name="username", nullable=false)
     private String username;
@@ -46,6 +46,9 @@ public class User extends UUIDBaseEntity implements Serializable {
     @Column(name="status")
     private int status;
 
+    @Column(name = "enabled")
+    private Boolean enabled;
+
     @Column(name="address")
     private String address;
 
@@ -55,5 +58,5 @@ public class User extends UUIDBaseEntity implements Serializable {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_name")
     )
-    private Set<Role> roles;
+    private Set<RoleEntity> roleEntities;
 }

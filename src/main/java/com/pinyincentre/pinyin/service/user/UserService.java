@@ -3,7 +3,7 @@ package com.pinyincentre.pinyin.service.user;
 import com.pinyincentre.pinyin.dto.request.UserRequest;
 import com.pinyincentre.pinyin.dto.request.UserUpdateRequest;
 import com.pinyincentre.pinyin.dto.response.UserResponse;
-import com.pinyincentre.pinyin.entity.User;
+import com.pinyincentre.pinyin.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -30,6 +30,6 @@ public interface UserService {
 
     Set<String> getRoleNames(String username);
 
-    User getUserByUserName(String userName);
+    UserEntity getUserByUserName(String userName);
 
 }

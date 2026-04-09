@@ -24,6 +24,22 @@ spring:
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: fotonhanh@gmail.com
+    password: nwvpmylcxhdfwyju   # hoặc App Password nếu bật 2FA
+    urlResetPassword: http://localhost:5173/reset-password?token=
+    urlConfirmPayOutWithDrawMoney: http://localhost:5173/confirm-withdraw?token=
+    activeAccountURL: http://localhost:5173/active-account?token=
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: "*"
 cache:
   default-ttl-in-seconds: 5
   redis:

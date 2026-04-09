@@ -1,7 +1,7 @@
 package com.pinyincentre.pinyin.controller;
 
 import com.pinyincentre.pinyin.entity.Schedule;
-import com.pinyincentre.pinyin.entity.User;
+import com.pinyincentre.pinyin.entity.UserEntity;
 import com.pinyincentre.pinyin.repository.ScheduleRepository;
 import com.pinyincentre.pinyin.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +34,9 @@ public class ScheduleController {
         LocalTime startTime = LocalTime.parse(request.get("start_time"));
         LocalTime endTime = LocalTime.parse(request.get("end_time"));
 
-        List<User> teachers = userRepository.findByRolesName("TEACHER");
+        List<UserEntity> teachers = userRepository.findByRoleEntitiesName("TEACHER");
 
-        List<User> availableTeachers = teachers.stream()
+        List<UserEntity> availableTeachers = teachers.stream()
                 .filter(teacher -> !scheduleRepository.existsByTeacherIdAndDateTime(
                         teacher.getId(), classDate, startTime, endTime))
                 .collect(Collectors.toList());

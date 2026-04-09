@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class Role implements Serializable {
+public class RoleEntity implements Serializable {
 
     @Id
     @Column(name = "role_name")

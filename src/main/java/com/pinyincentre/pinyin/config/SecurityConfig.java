@@ -49,7 +49,7 @@ public class SecurityConfig {
 //    }
 
 
-    @Value("${jwt.signerKey}")
+    @Value("${jwt.secret}")
     protected String SIGN_KEY;
 
     private final String[] PUBLIC_ENDPOINTS = {"",""};
@@ -58,12 +58,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.POST, "/auth/log-in").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/token", "/auth/introspect", "/auth/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/login-google", "/api/auth/callback").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/token", "/api/auth/introspect", "/api/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/registration-info/create").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/gemini/generate-response").permitAll()
 
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(new CustomAuthEntryPoint())
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwtConfigurer -> jwtConfigurer
@@ -81,7 +85,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("https://www.pinyincentre.com"));
+        config.setAllowedOrigins(List.of("https://www.pinyincentre.com", "http://localhost:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -93,11 +97,9 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGN_KEY.getBytes(), "HS512");
-
+        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGN_KEY.getBytes(), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
+                .macAlgorithm(MacAlgorithm.HS256)
                 .build();
     }
 
@@ -106,12 +108,14 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-            String scope = jwt.getClaimAsString("scope"); // Lấy claim "scope"
-            if (scope == null) return Collections.emptyList();
+            // JwtUtil stores roles as a List<String> under claim "roles"
+            List<String> roles = jwt.getClaimAsStringList("roles");
+            if (roles == null || roles.isEmpty()) return Collections.emptyList();
 
-            return Arrays.stream(scope.split(" "))
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList()); // Trả về List<SimpleGrantedAuthority> -> hợp lệ
+            return roles.stream()
+                    // hasAnyRole('ADMIN') checks for "ROLE_ADMIN" authority
+                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                    .collect(Collectors.toList());
         });
 
         return converter;

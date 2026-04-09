@@ -3,13 +3,12 @@ package com.pinyincentre.pinyin.service.user;
 import com.pinyincentre.pinyin.dto.request.UserRequest;
 import com.pinyincentre.pinyin.dto.request.UserUpdateRequest;
 import com.pinyincentre.pinyin.dto.response.UserResponse;
-import com.pinyincentre.pinyin.entity.Role;
-import com.pinyincentre.pinyin.entity.User;
+import com.pinyincentre.pinyin.entity.RoleEntity;
+import com.pinyincentre.pinyin.entity.UserEntity;
 import com.pinyincentre.pinyin.exception.AppException;
 import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.repository.RoleRepository;
 import com.pinyincentre.pinyin.repository.UserRepository;
-import com.pinyincentre.pinyin.service.utils.RandomStringGenerator;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -56,7 +53,7 @@ public class UserServiceImpl implements UserService {
         boolean existUsername = false;
         boolean existEmail = false;
         String message;
-        User user;
+        UserEntity userEntity;
         if(userRepository.existsByUsername(request.getUsername())) {
             existUsername = true;
         }
@@ -64,19 +61,19 @@ public class UserServiceImpl implements UserService {
             existEmail = true;
         }
         if(!existUsername && !existEmail) {
-            user = userMapper.toUser(request);
-            user.setStatus(UserStatus.ACTIVE.getCode());
+            userEntity = userMapper.toUser(request);
+            userEntity.setStatus(UserStatus.ACTIVE.getCode());
 
             // set role
-            Role role = roleRepository.findById("STUDENT")
+            RoleEntity roleEntity = roleRepository.findById("STUDENT")
                     .orElseThrow(() -> new RuntimeException("Role 'STUDENT' not found in DB"));
 
-            user.setRoles(Set.of(role));
+            userEntity.setRoleEntities(Set.of(roleEntity));
 
             // hash password
             //passwordGenerate = RandomStringGenerator.generate();
             passwordGenerate = testPass;
-            user.setPassword(passwordEncoder.encode(passwordGenerate));
+            userEntity.setPassword(passwordEncoder.encode(passwordGenerate));
             //emailService.emailVerification(user.getEmail(), user);
 //            message = ErrorCode.CREATE_USER.getMessage();
 //            log.warn(message);
@@ -90,7 +87,7 @@ public class UserServiceImpl implements UserService {
             }
             return null;
         }
-        return userMapper.toUserResponse(userRepository.save(user));
+        return userMapper.toUserResponse(userRepository.save(userEntity));
     }
 
     @PreAuthorize("@securityUtil.isCurrentUserId(#uid)")
@@ -98,19 +95,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateUser(UserUpdateRequest request, String uid) {
         log.info("User request: {}", request);
-        User user = userRepository.findById(uid).orElseThrow(
+        UserEntity userEntity = userRepository.findById(uid).orElseThrow(
                 () -> new AppException(ErrorCode.NOT_FOUND)
         );
-        log.info("User information: {},  {}", user, user.getDob());
-        userMapper.updateUserFromRequest(request, user);
-        user.setUpdatedDate(LocalDateTime.now());
+        log.info("User information: {},  {}", userEntity, userEntity.getDob());
+        userMapper.updateUserFromRequest(request, userEntity);
+        userEntity.setUpdatedDate(LocalDateTime.now());
 
 //        var roles = roleRepository.findAllById(request.getRoles());
 //        user.setRoles(new HashSet<>(roles));
-        log.info("User updated: {}", user);
-        User savedUser = userRepository.save(user);
-        log.info("User after update: {}", savedUser);
-        return userMapper.toUserResponse(savedUser);
+        log.info("User updated: {}", userEntity);
+        UserEntity savedUserEntity = userRepository.save(userEntity);
+        log.info("User after update: {}", savedUserEntity);
+        return userMapper.toUserResponse(savedUserEntity);
     }
 
     @PreAuthorize("hasAuthority('BAN_USER')")
@@ -147,10 +144,10 @@ public class UserServiceImpl implements UserService {
     @PreAuthorize("@securityUtil.isCurrentUserId(#uid)")
     @Override
     public UserResponse getUserById(String uid) {
-        User user = userRepository.findById(uid).orElseThrow(
+        UserEntity userEntity = userRepository.findById(uid).orElseThrow(
           () -> new AppException(ErrorCode.NOT_FOUND)
         );
-        return userMapper.toUserResponse(user);
+        return userMapper.toUserResponse(userEntity);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
@@ -173,7 +170,7 @@ public class UserServiceImpl implements UserService {
         boolean existUsername = false;
         boolean existEmail = false;
         String message;
-        User user;
+        UserEntity userEntity;
         if(userRepository.existsByUsername(request.getUsername())) {
             existUsername = true;
         }
@@ -181,19 +178,19 @@ public class UserServiceImpl implements UserService {
             existEmail = true;
         }
         if(!existUsername && !existEmail) {
-            user = userMapper.toUser(request);
-            user.setStatus(UserStatus.ACTIVE.getCode());
+            userEntity = userMapper.toUser(request);
+            userEntity.setStatus(UserStatus.ACTIVE.getCode());
 
             // set role
-            Role role = roleRepository.findById("TEACHER")
+            RoleEntity roleEntity = roleRepository.findById("TEACHER")
                     .orElseThrow(() -> new RuntimeException("Role 'TEACHER' not found in DB"));
 
-            user.setRoles(Set.of(role));
+            userEntity.setRoleEntities(Set.of(roleEntity));
 
             // hash password
             //passwordGenerate = RandomStringGenerator.generate();
             passwordGenerate = testPass;
-            user.setPassword(passwordEncoder.encode(passwordGenerate));
+            userEntity.setPassword(passwordEncoder.encode(passwordGenerate));
             //emailService.emailVerification(user.getEmail(), user);
 //            message = ErrorCode.CREATE_USER.getMessage();
 //            log.warn(message);
@@ -207,7 +204,7 @@ public class UserServiceImpl implements UserService {
             }
             return null;
         }
-        return userMapper.toUserResponse(userRepository.save(user));
+        return userMapper.toUserResponse(userRepository.save(userEntity));
     }
 
     @Cacheable(value = "userRoles", key = "#username")
@@ -215,14 +212,14 @@ public class UserServiceImpl implements UserService {
     public Set<String> getRoleNames(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"))
-                .getRoles()
+                .getRoleEntities()
                 .stream()
-                .map(Role::getName)
+                .map(RoleEntity::getName)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public User getUserByUserName(String userName) {
+    public UserEntity getUserByUserName(String userName) {
         return userRepository.getFirstByUsername(userName);
     }
 

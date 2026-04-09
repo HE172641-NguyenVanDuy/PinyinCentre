@@ -2,8 +2,8 @@ package com.pinyincentre.pinyin.annotation;
 
 import com.pinyincentre.pinyin.constant.RoleType;
 import com.pinyincentre.pinyin.dto.ResultInfo;
-import com.pinyincentre.pinyin.entity.Role;
-import com.pinyincentre.pinyin.entity.User;
+import com.pinyincentre.pinyin.entity.RoleEntity;
+import com.pinyincentre.pinyin.entity.UserEntity;
 import com.pinyincentre.pinyin.service.user.UserService;
 import com.pinyincentre.pinyin.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,11 +57,11 @@ public class PermissionAspect {
     }
 
     public boolean hasPermission(String userName, RoleType[] requiredRoles) {
-        User user = userService.getUserByUserName(userName);
-        if (user == null) return false;
+        UserEntity userEntity = userService.getUserByUserName(userName);
+        if (userEntity == null) return false;
 
-        return user.getRoles().stream()
-                .map(Role::getName)  // giả sử Role.getName() = "ROLE_ADMIN"
+        return userEntity.getRoleEntities().stream()
+                .map(RoleEntity::getName)  // giả sử Role.getName() = "ROLE_ADMIN"
                 .anyMatch(userRole ->
                         Arrays.stream(requiredRoles)
                                 .anyMatch(reqRole -> userRole.equals(reqRole.name()))

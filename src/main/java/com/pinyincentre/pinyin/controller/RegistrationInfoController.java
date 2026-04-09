@@ -17,7 +17,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/registration-info")
-@CrossOrigin(origins = "https://www.pinyincentre.com")
 @Slf4j(topic = "REGISTRATION-CONTROLLER")
 public class RegistrationInfoController {
 

@@ -1,5 +1,6 @@
 package com.pinyincentre.pinyin.repository;
 
+import com.pinyincentre.pinyin.dto.response.RegistrationInfoProjection;
 import com.pinyincentre.pinyin.dto.response.RegistrationInfoResponse;
 import com.pinyincentre.pinyin.entity.RegistrationInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,9 +20,9 @@ public interface RegistrationInfoRepository extends JpaRepository<RegistrationIn
         	ORDER BY created_date DESC LIMIT :limit OFFSET :offset
         ) AS TEMP
         INNER JOIN registration_info AS r ON r.id = TEMP.id
-        JOIN courses c ON r.course_id = c.id
+        LEFT JOIN courses c ON r.course_id = c.id
         """, nativeQuery = true)
-    List<RegistrationInfoResponse> getListNotRegistratedInfoWithPagination(
+    List<RegistrationInfoProjection> getListNotRegistratedInfoWithPagination(
             @Param("limit") int limit,
             @Param("offset") int offset
     );
@@ -34,11 +35,11 @@ public interface RegistrationInfoRepository extends JpaRepository<RegistrationIn
 
     @Query(value = """
     SELECT  r.id, r.fullname, r.phone_number, r.email, c.course_name, r.created_date, r.is_registered
-    FROM registration_info r JOIN courses c 
+    FROM registration_info r LEFT JOIN courses c 
         ON c.id = r.course_id 
     WHERE id = :uuid
     """,nativeQuery = true)
-    RegistrationInfoResponse findByUUID(@Param("uuid") String uuid);
+    RegistrationInfoProjection findByUUID(@Param("uuid") String uuid);
 
     @Modifying
     @Query(value = """

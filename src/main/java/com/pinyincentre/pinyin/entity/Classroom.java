@@ -36,5 +36,5 @@ public class Classroom extends UUIDBaseEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id", insertable = false, updatable = false)
-    private User teacher;
+    private UserEntity teacher;
 }

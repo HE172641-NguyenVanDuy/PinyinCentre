@@ -3,7 +3,7 @@ package com.pinyincentre.pinyin.service.user;
 import com.pinyincentre.pinyin.dto.request.UserRequest;
 import com.pinyincentre.pinyin.dto.request.UserUpdateRequest;
 import com.pinyincentre.pinyin.dto.response.UserResponse;
-import com.pinyincentre.pinyin.entity.User;
+import com.pinyincentre.pinyin.entity.UserEntity;
 import com.pinyincentre.pinyin.service.utils.DateMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Mapper(componentModel = "spring", uses = DateMapper.class)
 public interface UserMapper {
 
-    User toUser(UserRequest request);
+    UserEntity toUser(UserRequest request);
 
     @Mappings({
             @Mapping(source = "id", target = "id"),
@@ -26,7 +26,7 @@ public interface UserMapper {
             @Mapping(source = "dob", target = "dob"),
             @Mapping(source = "address", target = "address")
     })
-    UserResponse toUserResponse(User user);
+    UserResponse toUserResponse(UserEntity userEntity);
 
 //    @Mappings({
 //            @Mapping(source = "id", target = "id")
@@ -40,9 +40,9 @@ public interface UserMapper {
     @Mappings({
             @Mapping(source = "dob", target = "dob", qualifiedByName = "toLocalDateTime"),
             @Mapping(target = "address", source = "address"),
-            @Mapping(target = "roles", ignore = true)
+            @Mapping(target = "roleEntities", ignore = true)
     })
-    void updateUserFromRequest(UserUpdateRequest request, @MappingTarget User user);
+    void updateUserFromRequest(UserUpdateRequest request, @MappingTarget UserEntity userEntity);
 
     default String mapStatus(int statusCode) {
         try {
