@@ -105,6 +105,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     // Sửa trong AuthServiceImpl.java
+    @org.springframework.transaction.annotation.Transactional
     public TokenResponse login(String usernameOrEmail, String password) {
         UserEntity user = userRepository.findByUsername(usernameOrEmail)
                 .or(() -> userRepository.findByEmail(usernameOrEmail))
@@ -126,10 +127,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         ClientRegistration clientRegistration = clientRegistrationRepository.findByRegistrationId("google");
         if (clientRegistration == null) {
             log.error("Không tìm thấy client registration 'google'");
-            throw new RuntimeException(AuthMessage.LOGIN_FAILED_WITH_GOOGLE.getMessage());
+            throw new BusinessException(AuthMessage.LOGIN_FAILED_WITH_GOOGLE.getMessage());
         }
 
-//        String redirectUri = clientRegistration.getRedirectUri();
         log.info("Using redirect_uri: {}", googleOAuthProperties.getRedirectUri());
         String state = UUID.randomUUID().toString();
 
@@ -138,7 +138,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.info("Đã lưu state vào Redis: oauth_state:{}", state);
         } catch (Exception e) {
             log.error("Lỗi khi lưu state vào Redis: {}", e.getMessage());
-            throw new RuntimeException(AuthMessage.LOGIN_FAILED_WITH_GOOGLE.getMessage());
+            throw new BusinessException("Không thể kết nối Redis. Vui lòng thử lại sau: " + e.getMessage());
         }
 
         OAuth2AuthorizationRequest authRequest = OAuth2AuthorizationRequest.authorizationCode()
@@ -161,6 +161,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public TokenResponse authenticateAndFetchProfile(String code, String state) {
 
         String stateKey = "oauth_state:" + state;
@@ -284,6 +285,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return userRepository.save(newUser);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public TokenResponse getNewAccessToken(String refreshToken) {
         return jwtUtil.refreshAccessToken(refreshToken);
     }
