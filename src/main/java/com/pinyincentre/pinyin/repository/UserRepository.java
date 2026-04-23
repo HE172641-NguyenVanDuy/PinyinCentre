@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
     Optional<UserEntity> findFirstByUsernameIgnoreCaseOrEmailIgnoreCase(String username, String email);
 
     @Modifying
-    @Query(value = "UPDATE USERS u SET u.status = :status WHERE u.id = :id", nativeQuery = true)
+    @Query(value = "UPDATE users u SET u.status = :status WHERE u.id = :id", nativeQuery = true)
     int changeStatusUserById(@Param("id") String id,@Param("status") int status);
 
     @Query(value = """
@@ -46,12 +46,12 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
         U.gender AS gender
     FROM (
         SELECT id 
-        FROM USERS 
+        FROM users 
         WHERE status = :status AND (is_delete = 0 OR is_delete IS NULL)
         ORDER BY created_date DESC, username DESC 
         LIMIT :limit OFFSET :offset
     ) AS TMP
-    INNER JOIN USERS AS U ON U.id = TMP.id
+    INNER JOIN users AS U ON U.id = TMP.id
     """, nativeQuery = true)
     List<UserResponseProjection> listUserPagination(@Param("status") int status,
                                                     @Param("limit") int limit,
@@ -73,7 +73,7 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
         U.status AS status,
         U.address AS address,
         U.gender AS gender
-        FROM USERS U JOIN user_roles R ON U.id = R.user_id
+        FROM users U JOIN user_roles R ON U.id = R.user_id
                  WHERE R.role_name = :roleEntity AND (is_delete = 0 OR is_delete IS NULL) AND Status = :status
           ORDER BY created_date DESC, username DESC 
         LIMIT :limit OFFSET :offset
@@ -85,7 +85,7 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
 
 
     @Query(value = """
-        SELECT u.* FROM USERS u 
+        SELECT u.* FROM users u 
         JOIN user_roles r ON u.id = r.user_id 
         WHERE r.role_name = :roleName 
         AND u.status = :status 
@@ -104,7 +104,7 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
             U.dob AS dob, U.cic AS cic, U.full_name AS fullName, U.updated_date AS updateDate,
             U.created_date AS createDate, U.expired_date AS expireDate, U.status AS status, U.address AS address,
             U.gender AS gender
-        FROM USERS U
+        FROM users U
         INNER JOIN user_class UC ON U.id = UC.user_id
         WHERE UC.class_id = :classId
     """, nativeQuery = true)
@@ -116,7 +116,7 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
             U.dob AS dob, U.cic AS cic, U.full_name AS fullName, U.updated_date AS updateDate,
             U.created_date AS createDate, U.expired_date AS expireDate, U.status AS status, U.address AS address,
             U.gender AS gender
-        FROM USERS U
+        FROM users U
         INNER JOIN user_roles R ON U.id = R.user_id
         WHERE R.role_name = 'ROLE_STUDENT' AND U.status = 1 AND (U.is_delete = 0 OR U.is_delete IS NULL)
         AND NOT EXISTS (
