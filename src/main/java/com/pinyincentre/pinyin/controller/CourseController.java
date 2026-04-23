@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/course")
 @Slf4j(topic = "COURSE-CONTROLLER")
-@CrossOrigin(origins = "https://www.pinyincentre.com")
 public class CourseController {
 
     @Autowired
@@ -45,6 +44,39 @@ public class CourseController {
                 .status(200)
                 .message(ErrorCode.SUCCESS.getMessage())
                 .result(lstCourse)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping("/get-course/{id}")
+    public ResponseEntity<ApiResponse<CourseResponse>> getCourseById(@PathVariable String id) {
+        CourseResponse response = courseService.getCourseById(id);
+        ApiResponse<CourseResponse> apiResponse = ApiResponse.<CourseResponse>builder()
+                .status(200)
+                .message(ErrorCode.SUCCESS.getMessage())
+                .result(response)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ApiResponse<String>> updateCourse(@PathVariable String id, @RequestBody @Valid CourseRequest courseRequest) {
+        String response = courseService.updateCourse(id, courseRequest);
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+                .status(200)
+                .message(ErrorCode.SUCCESS.getMessage())
+                .result(response)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @PatchMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteCourse(@PathVariable String id) {
+        String response = courseService.deleteCourse(id);
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+                .status(200)
+                .message(ErrorCode.SUCCESS.getMessage())
+                .result(response)
                 .build();
         return ResponseEntity.ok(apiResponse);
     }

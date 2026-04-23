@@ -52,6 +52,9 @@ public class UserEntity extends UUIDBaseEntity implements Serializable {
     @Column(name="address")
     private String address;
 
+    @Column(name="gender")
+    private Boolean gender;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles", // bảng trung gian

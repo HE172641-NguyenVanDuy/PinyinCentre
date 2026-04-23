@@ -23,7 +23,7 @@ public interface UserService {
 
     UserResponse getUserById(String uid);
 
-    List<UserResponseProjection> getUserByRole(String role, Integer pageSize, int currentPage);
+    List<UserResponseProjection> getUserByRole(String role, Integer status, Integer pageSize, int currentPage);
 
     UserResponse createTeacherAccount(UserRequest request) throws IOException;
     //List<UserResponse> getAllUsersNotActive();
@@ -31,5 +31,6 @@ public interface UserService {
     Set<String> getRoleNames(String username);
 
     UserEntity getUserByUserName(String userName);
-
+    List<UserResponseProjection> getStudentsInClass(String classId);
+    List<UserResponseProjection> getStudentsNotInClass(String classId);
 }

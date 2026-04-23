@@ -42,12 +42,13 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
         U.created_date AS createDate,
         U.expired_date AS expireDate,
         U.status AS status,
-        U.address AS address
+        U.address AS address,
+        U.gender AS gender
     FROM (
         SELECT id 
         FROM USERS 
         WHERE status = :status AND (is_delete = 0 OR is_delete IS NULL)
-        ORDER BY created_date, username DESC 
+        ORDER BY created_date DESC, username DESC 
         LIMIT :limit OFFSET :offset
     ) AS TMP
     INNER JOIN USERS AS U ON U.id = TMP.id
@@ -70,20 +71,57 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
         U.created_date AS createDate,
         U.expired_date AS expireDate,
         U.status AS status,
-        U.address AS address    
+        U.address AS address,
+        U.gender AS gender
         FROM USERS U JOIN user_roles R ON U.id = R.user_id
-                 WHERE R.role_name = :roleEntity AND (is_delete = 0 OR is_delete IS NULL) AND Status = 1
-         ORDER BY created_date, username DESC 
+                 WHERE R.role_name = :roleEntity AND (is_delete = 0 OR is_delete IS NULL) AND Status = :status
+          ORDER BY created_date DESC, username DESC 
         LIMIT :limit OFFSET :offset
     """, nativeQuery = true)
-    List<UserResponseProjection> getListUserByRole(@Param("roleEntity") String roleEntity, @Param("limit") int limit,
+    List<UserResponseProjection> getListUserByRole(@Param("roleEntity") String roleEntity, 
+                                                   @Param("status") int status,
+                                                   @Param("limit") int limit,
                                                    @Param("offset") int offset);
 
 
-    List<UserEntity> findByRoleEntitiesName(String roleName);
+    @Query(value = """
+        SELECT u.* FROM USERS u 
+        JOIN user_roles r ON u.id = r.user_id 
+        WHERE r.role_name = :roleName 
+        AND u.status = :status 
+        AND (u.is_delete = 0 OR u.is_delete IS NULL)
+    """, nativeQuery = true)
+    List<UserEntity> findActiveTeachersByRole(@Param("roleName") String roleName, @Param("status") int status);
 
     @Query(value = """
     SELECT u.full_name FROM USERS u WHERE u.id = :id
     """,nativeQuery = true)
     String findFullNameById(@Param("id") String id);
+
+    @Query(value = """
+        SELECT 
+            U.id AS id, U.username AS username, U.email AS email, U.phone_number AS phoneNumber,
+            U.dob AS dob, U.cic AS cic, U.full_name AS fullName, U.updated_date AS updateDate,
+            U.created_date AS createDate, U.expired_date AS expireDate, U.status AS status, U.address AS address,
+            U.gender AS gender
+        FROM USERS U
+        INNER JOIN user_class UC ON U.id = UC.user_id
+        WHERE UC.class_id = :classId
+    """, nativeQuery = true)
+    List<UserResponseProjection> getStudentsInClass(@Param("classId") String classId);
+
+    @Query(value = """
+        SELECT 
+            U.id AS id, U.username AS username, U.email AS email, U.phone_number AS phoneNumber,
+            U.dob AS dob, U.cic AS cic, U.full_name AS fullName, U.updated_date AS updateDate,
+            U.created_date AS createDate, U.expired_date AS expireDate, U.status AS status, U.address AS address,
+            U.gender AS gender
+        FROM USERS U
+        INNER JOIN user_roles R ON U.id = R.user_id
+        WHERE R.role_name = 'ROLE_STUDENT' AND U.status = 1 AND (U.is_delete = 0 OR U.is_delete IS NULL)
+        AND NOT EXISTS (
+            SELECT 1 FROM user_class UC WHERE UC.user_id = U.id AND UC.class_id = :classId
+        )
+    """, nativeQuery = true)
+    List<UserResponseProjection> getStudentsNotInClass(@Param("classId") String classId);
 }

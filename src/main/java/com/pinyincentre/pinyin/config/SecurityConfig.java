@@ -58,11 +58,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/login-google", "/api/auth/callback").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/token", "/api/auth/introspect", "/api/auth/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/token", "/api/auth/introspect", "/api/auth/logout", "/api/auth/get-new-access-token").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/registration-info/create").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/gemini/generate-response").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/course/get-all-course").permitAll()
 
                         .anyRequest().authenticated()
                 )
@@ -86,7 +88,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("https://www.pinyincentre.com", "http://localhost:5173"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 

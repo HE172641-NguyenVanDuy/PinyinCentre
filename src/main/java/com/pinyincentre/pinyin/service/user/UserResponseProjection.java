@@ -18,4 +18,5 @@ public interface UserResponseProjection {
     LocalDateTime   getExpireDate();   // ✅ đổi từ Timestamp
     String getStatus();
     String getAddress();
+    Boolean getGender();
 }

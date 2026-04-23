@@ -9,6 +9,7 @@ import com.pinyincentre.pinyin.dto.request.LogoutRequest;
 import com.pinyincentre.pinyin.dto.response.ApiResponse;
 import com.pinyincentre.pinyin.dto.response.AuthenticationResponse;
 import com.pinyincentre.pinyin.dto.response.IntrospectResponse;
+import com.pinyincentre.pinyin.dto.response.UserResponse;
 import com.pinyincentre.pinyin.exception.BusinessException;
 import com.pinyincentre.pinyin.service.authentication.AuthenticationService;
 import com.pinyincentre.pinyin.util.JwtUtil;
@@ -146,6 +147,16 @@ public class AuthenticationController {
         return ResultInfo.builder()
                 .status(ResultInfo.RESULT_OK)
                 .message(AuthMessage.VALID_TOKEN.getMessage())
+                .build();
+    }
+
+    @GetMapping("/me")
+    public ResultInfo<?> getUserProfile(@RequestHeader("Authorization") String token) {
+        UserResponse userResponse = authService.getUserProfile(token);
+        return ResultInfo.builder()
+                .status(ResultInfo.RESULT_OK)
+                .data(userResponse)
+                .message(AuthMessage.USERNAME_EXISTS.getMessage())
                 .build();
     }
 

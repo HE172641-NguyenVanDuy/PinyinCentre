@@ -43,50 +43,33 @@ public class UserServiceImpl implements UserService {
     private static final int PAGE_SIZE = 10;
 
 
-    @PreAuthorize("hasAuthority('CREATE_ACCOUNT_STUDENT')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Transactional
     @Override
     public UserResponse createUser(UserRequest request) throws IOException {
         String testPass = "12345678";
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         String passwordGenerate;
-        boolean existUsername = false;
-        boolean existEmail = false;
-        String message;
-        UserEntity userEntity;
-        if(userRepository.existsByUsername(request.getUsername())) {
-            existUsername = true;
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new AppException(ErrorCode.EXIST_USERNAME);
         }
-        if(userRepository.existsByEmail(request.getEmail())) {
-            existEmail = true;
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.EXIST_EMAIL);
         }
-        if(!existUsername && !existEmail) {
-            userEntity = userMapper.toUser(request);
-            userEntity.setStatus(UserStatus.ACTIVE.getCode());
 
-            // set role
-            RoleEntity roleEntity = roleRepository.findById("STUDENT")
-                    .orElseThrow(() -> new RuntimeException("Role 'STUDENT' not found in DB"));
+        UserEntity userEntity = userMapper.toUser(request);
+        userEntity.setStatus(UserStatus.ACTIVE.getCode());
 
-            userEntity.setRoleEntities(Set.of(roleEntity));
+        // set role
+        RoleEntity roleEntity = roleRepository.findById("STUDENT")
+                .orElseThrow(() -> new RuntimeException("Role 'STUDENT' not found in DB"));
 
-            // hash password
-            //passwordGenerate = RandomStringGenerator.generate();
-            passwordGenerate = testPass;
-            userEntity.setPassword(passwordEncoder.encode(passwordGenerate));
-            //emailService.emailVerification(user.getEmail(), user);
-//            message = ErrorCode.CREATE_USER.getMessage();
-//            log.warn(message);
-        } else {
-            if(existEmail) {
-                message = ErrorCode.EXIST_EMAIL.getMessage();
-                log.warn(message);
-            } else {
-                message = ErrorCode.EXIST_USERNAME.getMessage();
-                log.warn(message);
-            }
-            return null;
-        }
+        userEntity.setRoleEntities(Set.of(roleEntity));
+
+        // hash password
+        passwordGenerate = testPass;
+        userEntity.setPassword(passwordEncoder.encode(passwordGenerate));
+
         return userMapper.toUserResponse(userRepository.save(userEntity));
     }
 
@@ -110,23 +93,25 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(savedUserEntity);
     }
 
-    @PreAuthorize("hasAuthority('BAN_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Transactional
     @Override
     public String banUser(String uid) {
-        String message;
-        int count;
         if(uid.isEmpty()) {
             return ErrorCode.USER_ID_EMPTY.getMessage();
         }
-        count = userRepository.changeStatusUserById(uid, UserStatus.BAN.getCode());
-        log.info("Number of count change the row: {}", count);
+        
+        UserEntity user = userRepository.findById(uid).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        int newStatus = (user.getStatus() == UserStatus.ACTIVE.getCode()) ? UserStatus.BAN.getCode() : UserStatus.ACTIVE.getCode();
+        
+        int count = userRepository.changeStatusUserById(uid, newStatus);
+        log.info("Number of count change the row: {}, New status: {}", count, newStatus);
+        
         if(count > 0) {
-            message = ErrorCode.BAN_USER_SUCCESS.getMessage();
+            return newStatus == UserStatus.BAN.getCode() ? "Khóa người dùng thành công" : "Mở khóa người dùng thành công";
         } else {
-            message = ErrorCode.BAN_USER_FAIL.getMessage();
+            return "Thao tác thất bại";
         }
-        return message;
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
@@ -152,13 +137,16 @@ public class UserServiceImpl implements UserService {
 
     @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
-    public List<UserResponseProjection> getUserByRole(String role, Integer pageSize, int currentPage) {
+    public List<UserResponseProjection> getUserByRole(String role, Integer status, Integer pageSize, int currentPage) {
         if (pageSize == null || pageSize < 1) {
             pageSize = PAGE_SIZE;
         }
-        log.info("Current page: {}, page size: {}", currentPage, pageSize);
+        if (status == null) {
+            status = UserStatus.ACTIVE.getCode();
+        }
+        log.info("Current page: {}, page size: {}, status: {}", currentPage, pageSize, status);
         int offset = (currentPage - 1) * pageSize;
-        return userRepository.getListUserByRole(role,pageSize , offset);
+        return userRepository.getListUserByRole(role, status, pageSize, offset);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
@@ -167,43 +155,26 @@ public class UserServiceImpl implements UserService {
         String testPass = "12345678";
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         String passwordGenerate;
-        boolean existUsername = false;
-        boolean existEmail = false;
-        String message;
-        UserEntity userEntity;
-        if(userRepository.existsByUsername(request.getUsername())) {
-            existUsername = true;
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new AppException(ErrorCode.EXIST_USERNAME);
         }
-        if(userRepository.existsByEmail(request.getEmail())) {
-            existEmail = true;
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.EXIST_EMAIL);
         }
-        if(!existUsername && !existEmail) {
-            userEntity = userMapper.toUser(request);
-            userEntity.setStatus(UserStatus.ACTIVE.getCode());
 
-            // set role
-            RoleEntity roleEntity = roleRepository.findById("TEACHER")
-                    .orElseThrow(() -> new RuntimeException("Role 'TEACHER' not found in DB"));
+        UserEntity userEntity = userMapper.toUser(request);
+        userEntity.setStatus(UserStatus.ACTIVE.getCode());
 
-            userEntity.setRoleEntities(Set.of(roleEntity));
+        // set role
+        RoleEntity roleEntity = roleRepository.findById("TEACHER")
+                .orElseThrow(() -> new RuntimeException("Role 'TEACHER' not found in DB"));
 
-            // hash password
-            //passwordGenerate = RandomStringGenerator.generate();
-            passwordGenerate = testPass;
-            userEntity.setPassword(passwordEncoder.encode(passwordGenerate));
-            //emailService.emailVerification(user.getEmail(), user);
-//            message = ErrorCode.CREATE_USER.getMessage();
-//            log.warn(message);
-        } else {
-            if(existEmail) {
-                message = ErrorCode.EXIST_EMAIL.getMessage();
-                log.warn(message);
-            } else {
-                message = ErrorCode.EXIST_USERNAME.getMessage();
-                log.warn(message);
-            }
-            return null;
-        }
+        userEntity.setRoleEntities(Set.of(roleEntity));
+
+        // hash password
+        passwordGenerate = testPass;
+        userEntity.setPassword(passwordEncoder.encode(passwordGenerate));
+
         return userMapper.toUserResponse(userRepository.save(userEntity));
     }
 
@@ -223,5 +194,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.getFirstByUsername(userName);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
+    @Override
+    public List<UserResponseProjection> getStudentsInClass(String classId) {
+        return userRepository.getStudentsInClass(classId);
+    }
 
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
+    @Override
+    public List<UserResponseProjection> getStudentsNotInClass(String classId) {
+        return userRepository.getStudentsNotInClass(classId);
+    }
 }

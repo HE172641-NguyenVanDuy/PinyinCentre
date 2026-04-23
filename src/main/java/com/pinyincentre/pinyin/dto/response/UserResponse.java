@@ -26,6 +26,7 @@ public class UserResponse {
     private Timestamp expireDate;
     private String status;
     private String address;
+    private Boolean gender;
 
     private Set<RoleResponse> roles;
 }

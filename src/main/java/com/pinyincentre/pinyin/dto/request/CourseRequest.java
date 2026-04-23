@@ -16,7 +16,7 @@ public class CourseRequest implements Serializable {
     @Size(min = 2, max = 100, message = "Course name must be between 2 and 100 characters")
     private String courseName;
 
-    @NotBlank(message = "Slot number must be filled.")
+    @Min(value = 1, message = "Số buổi học phải ít nhất là 1")
     private int slotNumber;
 
 //    @NotNull(message = "Start time cannot be null")

@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @ToString
 public class UserRequest {
 
-    @Size(min = 6, max = 30, message = "Username phải từ 6-30 ký tự")
-    @Pattern(regexp = "^[a-zA-Z0-9_.+-]+$", message = "Username chỉ được chứa chữ, số, dấu gạch dưới, dấu chấm, dấu cộng hoặc dấu trừ")
+    @Size(min = 6, max = 100, message = "Username phải từ 6-100 ký tự")
+    @Pattern(regexp = "^[a-zA-Z0-9_.+-@]+$", message = "Username chỉ được chứa chữ, số, dấu gạch dưới, dấu chấm, dấu cộng, dấu trừ hoặc ký tự @")
     String username;
 
     @Email(message = "Email không hợp lệ")

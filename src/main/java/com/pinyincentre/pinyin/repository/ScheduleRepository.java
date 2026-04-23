@@ -20,7 +20,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     boolean existsByTeacherIdAndDateTime(String teacherId, LocalDate classDate,
                                          LocalTime startTime, LocalTime endTime);
 
-    List<Schedule> findScheduleByClassId(String classId);
+    @Query("SELECT s FROM Schedule s WHERE s.classId = :classId AND (s.isDelete = false OR s.isDelete IS NULL)")
+    List<Schedule> findActiveSchedulesByClassId(String classId);
+ 
+    List<Schedule> findByClassId(String classId);
 
     @Query("SELECT s FROM Schedule s " +
             "LEFT JOIN FETCH s.classroom c " +

@@ -16,12 +16,14 @@ import java.time.LocalDateTime;
 public interface ClassroomMapper {
 
     @Mappings({
+            @Mapping(source = "className", target = "name"),
             @Mapping(source = "startDate", target = "startDate", qualifiedByName = "toLocalDateTime"),
             @Mapping(source = "endDate", target = "endDate", qualifiedByName = "toLocalDateTime")
     })
     Classroom toClassroom(ClassRequest request);
 
     @Mappings({
+            @Mapping(source = "className", target = "name"),
             @Mapping(source = "startDate", target = "startDate", qualifiedByName = "toLocalDateTime"),
             @Mapping(source = "endDate", target = "endDate", qualifiedByName = "toLocalDateTime")
     })

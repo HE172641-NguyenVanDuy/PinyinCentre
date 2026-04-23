@@ -63,4 +63,28 @@ public class CourseServiceImpl implements CourseService {
 
         return ErrorCode.CREATE_COURSE_FAIL.getMessage();
     }
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
+    @Transactional
+    @Override
+    public String updateCourse(String id, CourseRequest request) {
+        Course course = courseRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        courseMapper.updateCourse(course, request);
+        courseRepository.save(course);
+        return ErrorCode.SUCCESS.getMessage();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
+    @Transactional
+    @Override
+    public String deleteCourse(String id) {
+        Course course = courseRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        // Toggle or set to delete status
+        if (course.getIsDelete() == CourseStatus.ACTIVE.getCode()) {
+            course.setIsDelete(CourseStatus.INACTIVE.getCode());
+        } else {
+            course.setIsDelete(CourseStatus.ACTIVE.getCode());
+        }
+        courseRepository.save(course);
+        return ErrorCode.SUCCESS.getMessage();
+    }
 }

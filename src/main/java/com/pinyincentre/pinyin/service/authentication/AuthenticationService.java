@@ -6,8 +6,10 @@ import com.pinyincentre.pinyin.dto.TokenResponse;
 import com.pinyincentre.pinyin.dto.request.AuthenticationRequest;
 import com.pinyincentre.pinyin.dto.request.IntrospectRequest;
 import com.pinyincentre.pinyin.dto.request.LogoutRequest;
+import com.pinyincentre.pinyin.dto.response.ApiResponse;
 import com.pinyincentre.pinyin.dto.response.AuthenticationResponse;
 import com.pinyincentre.pinyin.dto.response.IntrospectResponse;
+import com.pinyincentre.pinyin.dto.response.UserResponse;
 import com.pinyincentre.pinyin.entity.UserEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
@@ -39,4 +41,5 @@ public interface AuthenticationService {
 
     void changePassword(ChangePasswordDTO payload, String token);
 
+    UserResponse getUserProfile(String token);
 }

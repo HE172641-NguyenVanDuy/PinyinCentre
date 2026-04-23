@@ -17,6 +17,8 @@ public interface CourseMapper {
 //    @Mapping(source = "endDate", target = "endDate")
     Course toCourse(CourseRequest request);
     CourseResponse toCourseResponse(Course course);
+
+    void updateCourse(@org.mapstruct.MappingTarget Course course, CourseRequest request);
     default Timestamp map(LocalDateTime localDateTime) {
         return localDateTime == null ? null : Timestamp.valueOf(localDateTime);
     }

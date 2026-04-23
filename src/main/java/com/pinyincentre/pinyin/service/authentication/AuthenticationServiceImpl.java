@@ -4,11 +4,13 @@ import com.auth0.jwt.JWT;
 import com.pinyincentre.pinyin.constant.AuthMessage;
 import com.pinyincentre.pinyin.constant.RoleType;
 import com.pinyincentre.pinyin.dto.*;
+import com.pinyincentre.pinyin.dto.response.UserResponse;
 import com.pinyincentre.pinyin.entity.RoleEntity;
 import com.pinyincentre.pinyin.entity.UserEntity;
 import com.pinyincentre.pinyin.exception.BusinessException;
 import com.pinyincentre.pinyin.repository.RoleRepository;
 import com.pinyincentre.pinyin.repository.UserRepository;
+import com.pinyincentre.pinyin.service.user.UserMapper;
 import com.pinyincentre.pinyin.util.JwtUtil;
 import com.pinyincentre.pinyin.util.RedisKeyUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,6 +56,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisKeyUtil redisKeyUtil;
     private final GoogleOAuthProperties googleOAuthProperties;
+    private final UserMapper userMapper;
 //    private final CartRepository cartRepository;
     @Value("${spring.mail.urlResetPassword}")
     private String urlResetPasswordCallBack;
@@ -424,6 +427,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(user);
     }
 
+    @Override
+    public UserResponse getUserProfile(String token) {
+        String username = jwtUtil.getUsernameFromToken(token);
+        UserEntity user = userRepository.getFirstByUsername(username);
+        return  userMapper.toUserResponse(user);
+    }
 
     public String registerByAdmin(String username, String email, String password) {
         Optional<UserEntity> checkByEmail = userRepository.findByEmail(email);

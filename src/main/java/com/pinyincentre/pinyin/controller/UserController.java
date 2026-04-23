@@ -20,7 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user")
 @Slf4j(topic = "USER-CONTROLLER")
-@CrossOrigin(origins = "https://www.pinyincentre.com")
 public class UserController {
 
     @Autowired
@@ -41,8 +40,9 @@ public class UserController {
     @GetMapping("/get-users-by-role")
     public ResponseEntity<ApiResponse<List<UserResponseProjection>>> listUsersByRole(@RequestParam(defaultValue = "1") int page,
                                                                                      @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-                                                                                     @RequestParam(required = true) String role  ) {
-        List<UserResponseProjection> lstUsers = userService.getUserByRole(role, pageSize, page);
+                                                                                     @RequestParam(required = true) String role,
+                                                                                     @RequestParam(required = false) Integer status) {
+        List<UserResponseProjection> lstUsers = userService.getUserByRole(role, status, pageSize, page);
         ApiResponse<List<UserResponseProjection>> apiResponse = ApiResponse.<List<UserResponseProjection>>builder()
                 .status(HttpStatus.OK.value())
                 .message(ErrorCode.SUCCESS.getMessage())
@@ -102,6 +102,28 @@ public class UserController {
                 .status(HttpStatus.OK.value())
                 .message(ErrorCode.SUCCESS.getMessage())
                 .result(userResponse)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping("/students/in-class/{classId}")
+    public ResponseEntity<ApiResponse<List<UserResponseProjection>>> getStudentsInClass(@PathVariable String classId) {
+        List<UserResponseProjection> students = userService.getStudentsInClass(classId);
+        ApiResponse<List<UserResponseProjection>> apiResponse = ApiResponse.<List<UserResponseProjection>>builder()
+                .status(HttpStatus.OK.value())
+                .message(ErrorCode.SUCCESS.getMessage())
+                .result(students)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping("/students/not-in-class/{classId}")
+    public ResponseEntity<ApiResponse<List<UserResponseProjection>>> getStudentsNotInClass(@PathVariable String classId) {
+        List<UserResponseProjection> students = userService.getStudentsNotInClass(classId);
+        ApiResponse<List<UserResponseProjection>> apiResponse = ApiResponse.<List<UserResponseProjection>>builder()
+                .status(HttpStatus.OK.value())
+                .message(ErrorCode.SUCCESS.getMessage())
+                .result(students)
                 .build();
         return ResponseEntity.ok(apiResponse);
     }

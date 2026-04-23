@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 //@RestController
-//@CrossOrigin(origins = "https://www.pinyincentre.com")
 //@RequestMapping("/api/gemini")
 //public class ChatbotController {
 //

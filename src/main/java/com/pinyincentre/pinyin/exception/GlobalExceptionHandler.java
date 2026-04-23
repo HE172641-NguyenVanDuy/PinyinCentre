@@ -111,7 +111,11 @@ public class GlobalExceptionHandler {
         Map<String, Object> response = new HashMap<>();
         response.put("status", HttpStatus.BAD_REQUEST.value());
         response.put("error", "Bad Request");
-        response.put("message", "Dữ liệu không hợp lệ");
+        
+        // Use the first error message or join them
+        String message = errors.values().stream().findFirst().orElse("Dữ liệu không hợp lệ");
+        response.put("message", message);
+        
         response.put("path", request.getRequestURI());
         response.put("timestamp", LocalDateTime.now());
         response.put("errors", errors);

@@ -2,7 +2,10 @@ package com.pinyincentre.pinyin.service.course;
 
 public enum CourseStatus {
 
-    ACTIVE(false,"Active"),;
+    ACTIVE(false,"Active"),
+    INACTIVE(true,"Inactive"),
+
+    ;
 
     private final boolean code;
     private final String statusName;

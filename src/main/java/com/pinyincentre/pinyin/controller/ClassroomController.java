@@ -26,7 +26,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "https://www.pinyincentre.com")
 @RequestMapping("/api/classroom")
 @Slf4j(topic = "CLASS-CONTROLLER")
 public class ClassroomController {
@@ -119,33 +118,45 @@ public class ClassroomController {
             // Tạo lớp học
             Classroom cls = new Classroom();
             cls.setId(UUID.randomUUID().toString());
-            cls.setName((String) request.get("name"));
-            cls.setCourseId((String) request.get("course_id"));
-            cls.setTeacherId((String) request.get("teacher_id"));
+            cls.setName((String) request.get("className"));
+            cls.setCourseId((String) request.get("courseId"));
+            cls.setTeacherId((String) request.get("teacherId"));
             cls.setCreatedDate(LocalDateTime.now());
-            cls.setEndDate(LocalDateTime.now());
-            cls.setStartDate(LocalDateTime.now());
+            
+            if (request.get("startDate") != null) {
+                cls.setStartDate(LocalDate.parse((String) request.get("startDate")).atStartOfDay());
+            }
+            if (request.get("endDate") != null) {
+                cls.setEndDate(LocalDate.parse((String) request.get("endDate")).atStartOfDay());
+            }
+            
+            if (request.get("maxStudents") != null) {
+                cls.setMaxStudents(Integer.parseInt(request.get("maxStudents").toString()));
+            }
+            
             cls.setIsDelete(false);
             classRepository.save(cls);
-
+ 
             // Tạo lịch học
             List<Map<String, String>> schedules = (List<Map<String, String>>) request.get("schedules");
-            for (Map<String, String> s : schedules) {
-                Schedule schedule = new Schedule();
-                schedule.setClassId(cls.getId());
-                schedule.setClassDate(LocalDate.parse(s.get("class_date")));
-                schedule.setStartTime(LocalTime.parse(s.get("start_time")));
-                schedule.setEndTime(LocalTime.parse(s.get("end_time")));
-                schedule.setDescription(s.get("description"));
-                schedule.setLink(s.get("link"));
-                schedule.setCreatedDate(LocalDateTime.now());
-                schedule.setIsDelete(false);
-                scheduleRepository.save(schedule);
+            if (schedules != null) {
+                for (Map<String, String> s : schedules) {
+                    Schedule schedule = new Schedule();
+                    schedule.setClassId(cls.getId());
+                    schedule.setClassDate(LocalDate.parse(s.get("classDate")));
+                    schedule.setStartTime(LocalTime.parse(s.get("startTime")));
+                    schedule.setEndTime(LocalTime.parse(s.get("endTime")));
+                    schedule.setDescription(s.get("description"));
+                    schedule.setLink(s.get("link"));
+                    schedule.setCreatedDate(LocalDateTime.now());
+                    schedule.setIsDelete(false);
+                    scheduleRepository.save(schedule);
+                }
             }
-
+ 
             return ResponseEntity.ok(Map.of(
                     "status", 200,
-                    "message","Class created successfully"));
+                    "message", "Class created successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "status", 400,
@@ -153,18 +164,25 @@ public class ClassroomController {
             ));
         }
     }
+
     @GetMapping("/list")
     public ResponseEntity<Map<String, Object>> getClassList() {
         try {
             List<Classroom> classes = classRepository.findAll();
             List<Map<String, Object>> classList = classes.stream().map(cls -> {
-                String courseName = courseRepository.findById(cls.getCourseId())
-                        .map(c -> c.getCourseName())
-                        .orElse("Không xác định");
+                String courseName = "Không xác định";
+                if (cls.getCourseId() != null) {
+                    courseName = courseRepository.findById(cls.getCourseId())
+                            .map(c -> c.getCourseName())
+                            .orElse("Không xác định");
+                }
 
-                String teacherName = userRepository.findById(cls.getTeacherId())
-                        .map(u -> u.getFullName())
-                        .orElse("Không xác định");
+                String teacherName = "Không xác định";
+                if (cls.getTeacherId() != null) {
+                    teacherName = userRepository.findById(cls.getTeacherId())
+                            .map(u -> u.getFullName())
+                            .orElse("Không xác định");
+                }
 
                 long studentCount = userClassRepository.countByClassId(cls.getId());
 
@@ -182,7 +200,7 @@ public class ClassroomController {
 
             return ResponseEntity.ok(Map.of(
                     "status", 200,
-                    "data", classList
+                    "result", classList
             ));
 
         } catch (Exception e) {
@@ -197,35 +215,41 @@ public class ClassroomController {
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getClassById(@PathVariable String id) {
         try {
-//            Classroom classroom = classRepository.findById(id)
-//                    .orElseThrow(() -> new RuntimeException("Không tìm thấy lớp học"));
             Classroom classroom = classRepository.findByClassId(id);
+            List<Schedule> schedules = scheduleRepository.findActiveSchedulesByClassId(id);
+            
+            Map<String, Object> classData = new HashMap<>();
+            classData.put("id", classroom.getId());
+            classData.put("className", classroom.getName() != null ? classroom.getName() : "");
+            classData.put("courseId", classroom.getCourseId() != null ? classroom.getCourseId() : "");
+            classData.put("teacherId", classroom.getTeacherId() != null ? classroom.getTeacherId() : "");
+            classData.put("startDate", classroom.getStartDate() != null ? classroom.getStartDate().toLocalDate().toString() : "");
+            classData.put("endDate", classroom.getEndDate() != null ? classroom.getEndDate().toLocalDate().toString() : "");
+            classData.put("maxStudents", classroom.getMaxStudents());
+            
+            List<Map<String, Object>> scheduleList = schedules.stream().map(s -> {
+                Map<String, Object> sMap = new HashMap<>();
+                sMap.put("id", s.getId());
+                sMap.put("classDate", s.getClassDate() != null ? s.getClassDate().toString() : "");
+                sMap.put("startTime", s.getStartTime() != null ? s.getStartTime().toString() : "");
+                sMap.put("endTime", s.getEndTime() != null ? s.getEndTime().toString() : "");
+                sMap.put("link", s.getLink() != null ? s.getLink() : "");
+                sMap.put("description", s.getDescription() != null ? s.getDescription() : "");
+                return sMap;
+            }).collect(Collectors.toList());
+            
+            classData.put("schedules", scheduleList);
 
-            List<Schedule> schedules = scheduleRepository.findScheduleByClassId(id);
-
-            Map<String, Object> classData = Map.of(
-                    "id", classroom.getId(),
-                    "name", classroom.getName(),
-                    "course_id", classroom.getCourseId(),
-                    "teacher_id", classroom.getTeacherId(),
-                    "start_date", classroom.getStartDate() != null ? classroom.getStartDate().toString() : "",
-                    "end_date", classroom.getEndDate() != null ? classroom.getEndDate().toString() : "",
-                    "schedules", schedules.stream().map(s -> Map.of(
-                            "id", s.getId(),
-                            "class_date", s.getClassDate().toString(),
-                            "start_time", s.getStartTime().toString(),
-                            "end_time", s.getEndTime().toString(),
-                            "link", s.getLink() != null ? s.getLink() : "",
-                            "description", s.getDescription() != null ? s.getDescription() : ""
-                    )).collect(Collectors.toList())
-            );
-
-            return ResponseEntity.ok(Map.of("status", 200, "data", classData));
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", 200);
+            response.put("result", classData);
+            
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "status", 400,
-                    "message", "Lỗi khi lấy lớp: " + e.getMessage()
-            ));
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", 400);
+            error.put("message", "Lỗi khi lấy lớp: " + e.getMessage());
+            return ResponseEntity.badRequest().body(error);
         }
     }
 
@@ -241,21 +265,27 @@ public class ClassroomController {
             Classroom classroom = classRepository.findByClassId(id);
 
 
-            classroom.setName((String) request.get("name"));
-            classroom.setCourseId((String) request.get("course_id"));
-            classroom.setTeacherId((String) request.get("teacher_id"));
-            classroom.setStartDate(request.get("start_date") != null
-                    ? LocalDateTime.parse((String) request.get("start_date"))
-                    : null);
-            classroom.setEndDate(request.get("end_date") != null
-                    ? LocalDateTime.parse((String) request.get("end_date"))
-                    : null);
+            classroom.setName((String) request.get("className"));
+            classroom.setCourseId((String) request.get("courseId"));
+            classroom.setTeacherId((String) request.get("teacherId"));
+            
+            if (request.get("startDate") != null && !((String) request.get("startDate")).isEmpty()) {
+                classroom.setStartDate(LocalDate.parse((String) request.get("startDate")).atStartOfDay());
+            }
+            
+            if (request.get("endDate") != null && !((String) request.get("endDate")).isEmpty()) {
+                classroom.setEndDate(LocalDate.parse((String) request.get("endDate")).atStartOfDay());
+            }
+
+            if (request.get("maxStudents") != null) {
+                classroom.setMaxStudents(Integer.parseInt(request.get("maxStudents").toString()));
+            }
 
             classRepository.save(classroom);
 
             // Xử lý lịch học
             List<Map<String, Object>> schedulesInput = (List<Map<String, Object>>) request.get("schedules");
-            List<Schedule> existingSchedules = scheduleRepository.findScheduleByClassId(id);
+            List<Schedule> existingSchedules = scheduleRepository.findActiveSchedulesByClassId(id);
 
             // Xóa các schedule không còn trong input
             for (Schedule existing : existingSchedules) {
@@ -278,9 +308,9 @@ public class ClassroomController {
                     schedule = new Schedule();
                     schedule.setClassId(id);
                 }
-                schedule.setClassDate(LocalDate.parse((String) s.get("class_date")));
-                schedule.setStartTime(LocalTime.parse((String) s.get("start_time")));
-                schedule.setEndTime(LocalTime.parse((String) s.get("end_time")));
+                schedule.setClassDate(LocalDate.parse((String) s.get("classDate")));
+                schedule.setStartTime(LocalTime.parse((String) s.get("startTime")));
+                schedule.setEndTime(LocalTime.parse((String) s.get("endTime")));
                 schedule.setLink((String) s.get("link"));
                 schedule.setDescription((String) s.get("description"));
                 schedule.setIsDelete(false);
