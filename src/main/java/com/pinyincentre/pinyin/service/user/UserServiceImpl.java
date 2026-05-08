@@ -194,13 +194,13 @@ public class UserServiceImpl implements UserService {
         return userRepository.getFirstByUsername(userName);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER','TEACHER')")
     @Override
     public List<UserResponseProjection> getStudentsInClass(String classId) {
         return userRepository.getStudentsInClass(classId);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER','TEACHER')")
     @Override
     public List<UserResponseProjection> getStudentsNotInClass(String classId) {
         return userRepository.getStudentsNotInClass(classId);

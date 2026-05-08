@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ClassRepository extends JpaRepository<Classroom, UUID> {
+public interface ClassRepository extends JpaRepository<Classroom, String> {
 
     @Query(value = "SELECT c.name AS className, co.courseName AS courseName, \n" +
             "       u.fullName AS teacherName, c.startDate AS startDate, \n" +

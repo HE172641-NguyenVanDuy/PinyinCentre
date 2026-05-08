@@ -107,7 +107,7 @@ public class ScheduleController {
 
                         return ResponseEntity.ok(Map.of(
                                         "status", 200,
-                                        "data", scheduleDetails));
+                                        "result", scheduleDetails));
                 } catch (Exception e) {
                         return ResponseEntity.badRequest().body(Map.of(
                                         "status", 400,

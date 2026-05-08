@@ -357,8 +357,7 @@ public class ClassroomController {
             List<String> userIds = (List<String>) request.get("user_ids");
 
             // Kiểm tra lớp có tồn tại
-            UUID classUUID = UUID.fromString(classId);
-            if (!classRepository.existsById( classUUID)) {
+            if (!classRepository.existsById(classId)) {
                 return ResponseEntity.badRequest().body(Map.of(
                         "status", 400,
                         "message","Lớp không tồn tại"

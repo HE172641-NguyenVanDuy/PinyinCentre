@@ -118,7 +118,7 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
             U.gender AS gender
         FROM users U
         INNER JOIN user_roles R ON U.id = R.user_id
-        WHERE R.role_name = 'ROLE_STUDENT' AND U.status = 1 AND (U.is_delete = 0 OR U.is_delete IS NULL)
+        WHERE R.role_name = 'STUDENT' AND U.status = 1 AND (U.is_delete = 0 OR U.is_delete IS NULL)
         AND NOT EXISTS (
             SELECT 1 FROM user_class UC WHERE UC.user_id = U.id AND UC.class_id = :classId
         )
