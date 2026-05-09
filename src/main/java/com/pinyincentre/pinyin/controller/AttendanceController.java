@@ -65,6 +65,15 @@ public class AttendanceController {
         }
     }
 
+    @GetMapping("/class-summary/{classId}")
+    public ResponseEntity<Map<String, Object>> getSummaryByClass(@PathVariable String classId) {
+        List<Map<String, Object>> summary = attendanceRepository.getClassSummary(classId);
+        return ResponseEntity.ok(Map.of(
+                "status", 200,
+                "result", summary
+        ));
+    }
+
     @lombok.Data
     public static class AttendanceRequest {
         private String userId;

@@ -11,8 +11,10 @@ import java.util.List;
 
 @Repository
 public interface UserClassRepository extends JpaRepository<UserClass, Long> {
+    long countByUserId(String userId);
     long countByClassId(String classId);
     List<UserClass> findByClassId(String classId);
+    List<UserClass> findByUserId(String userId);
     @Modifying
     @Transactional
     @Query("DELETE FROM UserClass uc WHERE uc.userId = :userId AND uc.classId = :classId")

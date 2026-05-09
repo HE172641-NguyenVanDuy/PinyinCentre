@@ -3,11 +3,13 @@ package com.pinyincentre.pinyin.repository;
 import com.pinyincentre.pinyin.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
@@ -33,4 +35,21 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             "ORDER BY s.classDate ASC, s.startTime ASC")
     List<Schedule> findSchedulesBetweenDates(LocalDate startDate, LocalDate endDate);
 
+    @Query(value = """
+    SELECT s.id, s.class_date as class_date, s.start_time as start_time, 
+           s.end_time as end_time, c.class_name as classroom_name, 
+           co.course_name as course_name, s.link
+    FROM schedules s
+    JOIN classes c ON s.class_id = c.id
+    JOIN courses co ON c.course_id = co.id
+    JOIN user_class uc ON uc.class_id = c.id
+    WHERE uc.user_id = :studentId 
+      AND s.class_date BETWEEN :startDate AND :endDate
+      AND (s.is_delete = false OR s.is_delete IS NULL)
+    ORDER BY s.class_date ASC, s.start_time ASC
+""", nativeQuery = true)
+    List<Map<String, Object>> findSchedulesByStudentIdAndDateRange(
+            @Param("studentId") String studentId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }

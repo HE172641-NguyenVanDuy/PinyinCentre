@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Repository
@@ -52,4 +53,15 @@ public interface ClassRepository extends JpaRepository<Classroom, String> {
     List<ClassResponse> findClassByCourseId(@Param("id") String id);
 
 
+    @Query(value = """
+    SELECT c.id, c.class_name as name, co.course_name as course_name, 
+           c.started_date as start_date, c.end_date as end_date,
+           (SELECT COUNT(*) FROM user_class uc2 WHERE uc2.class_id = c.id) as student_count,
+           (SELECT COUNT(*) FROM schedules s WHERE s.class_id = c.id AND (s.is_delete = false OR s.is_delete IS NULL)) as schedule_count
+    FROM classes c
+    JOIN courses co ON c.course_id = co.id
+    JOIN user_class uc ON uc.class_id = c.id
+    WHERE uc.user_id = :studentId AND (c.is_delete = false OR c.is_delete IS NULL)
+    """, nativeQuery = true)
+    List<Map<String, Object>> findClassesByStudentId(@Param("studentId") String studentId);
 }
