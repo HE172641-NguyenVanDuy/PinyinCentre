@@ -2,6 +2,7 @@ package com.pinyincentre.pinyin.controller;
 
 import com.nimbusds.jose.JOSEException;
 import com.pinyincentre.pinyin.constant.AuthMessage;
+import com.pinyincentre.pinyin.constant.EmailEnum;
 import com.pinyincentre.pinyin.dto.*;
 import com.pinyincentre.pinyin.dto.request.AuthenticationRequest;
 import com.pinyincentre.pinyin.dto.request.IntrospectRequest;
@@ -34,14 +35,14 @@ public class AuthenticationController {
     private final JwtUtil jwtUtil;
     private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
 
-//    @PostMapping("/forgot-password")
-//    public ResultInfo<?> forgotPassword(@RequestBody ForgotPasswordDto payload) {
-//        authService.forgotPassword(payload.getEmail());
-//        return ResultInfo.builder()
-//                .status(ResultInfo.RESULT_OK)
-//                .message(EmailEnum.SEND_EMAIL_SUCCESSFULLY.getMessage())
-//                .build();s
-//    }
+    @PostMapping("/forgot-password")
+    public ResultInfo<?> forgotPassword(@RequestBody ForgotPasswordDto payload) {
+        authService.forgotPassword(payload.getEmail());
+        return ResultInfo.builder()
+                .status(ResultInfo.RESULT_OK)
+                .message(EmailEnum.SEND_EMAIL_SUCCESSFULLY.getMessage())
+                .build();
+    }
 
 //    @PostMapping("/register")
 //    public ResultInfo<?> register(@RequestBody RegisterRequestDto request) {

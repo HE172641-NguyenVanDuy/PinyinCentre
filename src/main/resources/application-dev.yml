@@ -27,8 +27,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: fotonhanh@gmail.com
-    password: nwvpmylcxhdfwyju   # hoặc App Password nếu bật 2FA
+    username: duyanhcules@gmail.com
+    password: dzbj hvfh care tson    # hoặc App Password nếu bật 2FA
     urlResetPassword: http://localhost:5173/reset-password?token=
     urlConfirmPayOutWithDrawMoney: http://localhost:5173/confirm-withdraw?token=
     activeAccountURL: http://localhost:5173/active-account?token=

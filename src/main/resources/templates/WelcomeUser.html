@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chào mừng bạn đến với PinyinCentre</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f7f6; }
+        .container { max-width: 600px; margin: 20px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header { background: #4F46E5; color: #fff; padding: 30px; text-align: center; }
+        .header img { max-width: 150px; margin-bottom: 15px; }
+        .content { padding: 30px; }
+        .footer { background: #f9fafb; color: #6b7280; padding: 20px; text-align: center; font-size: 14px; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 20px; }
+        .info-box { background: #f3f4f6; border-radius: 6px; padding: 20px; margin: 20px 0; }
+        .info-item { margin-bottom: 10px; }
+        .info-label { font-weight: bold; color: #4b5563; }
+        .info-value { color: #111827; }
+        .warning { color: #dc2626; font-size: 14px; margin-top: 15px; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- Placeholder for Logo -->
+            <div style="font-size: 24px; font-weight: bold;">PINYIN CENTRE</div>
+            <p>Khám phá tiếng Trung dễ dàng hơn bao giờ hết</p>
+        </div>
+        <div class="content">
+            <h3>Xin chào %FULL_NAME%,</h3>
+            <p>Chào mừng bạn gia nhập gia đình <strong>PinyinCentre</strong>! Tài khoản của bạn đã được khởi tạo thành công bởi quản trị viên.</p>
+            
+            <p>Dưới đây là thông tin đăng nhập của bạn:</p>
+            
+            <div class="info-box">
+                <div class="info-item">
+                    <span class="info-label">Email đăng nhập:</span>
+                    <span class="info-value">%EMAIL%</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Mật khẩu tạm thời:</span>
+                    <span class="info-value" style="font-family: monospace; font-size: 16px; background: #e5e7eb; padding: 2px 6px; border-radius: 4px;">%PASSWORD%</span>
+                </div>
+            </div>
+
+            <p class="warning">⚠️ Quan trọng: Vì lý do bảo mật, vui lòng đổi mật khẩu ngay sau khi đăng nhập lần đầu tiên.</p>
+
+            <div style="text-align: center;">
+                <a href="%LOGIN_URL%" class="btn">Đăng nhập ngay</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 PinyinCentre. All rights reserved.</p>
+            <p>Email này được gửi tự động, vui lòng không phản hồi.</p>
+        </div>
+    </div>
+</body>
+</html>
