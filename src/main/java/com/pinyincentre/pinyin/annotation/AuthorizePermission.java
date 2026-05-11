@@ -9,9 +9,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
-public @interface Permission {
+public @interface AuthorizePermission {
     RoleType[] roles() default {};
     String target() default "Authorization";
     String message() default "Bạn không có quyền thực hiện thao tác này";
 }
-

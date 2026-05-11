@@ -31,10 +31,10 @@ public class PermissionAspect {
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
-    @Around("execution(* *(..)) && @annotation(permission)")
-    public Object invoke(final ProceedingJoinPoint pjp, Permission permission) throws Throwable {
+    @Around("execution(* *(..)) && @annotation(authorizePermission)")
+    public Object invoke(final ProceedingJoinPoint pjp, AuthorizePermission authorizePermission) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String token = request.getHeader(permission.target());
+        String token = request.getHeader(authorizePermission.target());
         if (token == null) {
             return ResultInfo.builder()
                     .status(ResultInfo.RESULT_NOK_403)
@@ -45,13 +45,13 @@ public class PermissionAspect {
         token = token.replace("Bearer ", "");
         String userName = jwtUtil.getUsernameFromToken(token);
 
-        boolean rlt = hasPermission(userName, permission.roles());
+        boolean rlt = hasPermission(userName, authorizePermission.roles());
         if (rlt) {
             return pjp.proceed();
         } else {
             return ResultInfo.builder()
                     .status(ResultInfo.RESULT_NOK_403)
-                    .message(permission.message())
+                    .message(authorizePermission.message())
                     .build();
         }
     }
