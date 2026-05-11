@@ -33,4 +33,8 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     SElECT c.course_name FROM Courses c WHERE c.id = :id
     """,nativeQuery = true)
     String findCourseNameById(@Param("id") String id);
+    @Query(value = "SELECT COUNT(c.id) FROM courses c WHERE (c.is_delete = 0 OR c.is_delete IS NULL)", nativeQuery = true)
+    long countTotalCourses();
+    @Query(value = "SELECT c.course_name, (SELECT COUNT(uc.id) FROM user_class uc JOIN classes cl ON uc.class_id = cl.id WHERE cl.course_id = c.id) as student_count FROM courses c WHERE (c.is_delete = 0 OR c.is_delete IS NULL)", nativeQuery = true)
+    List<Object[]> countEnrollmentPerCourse();
 }

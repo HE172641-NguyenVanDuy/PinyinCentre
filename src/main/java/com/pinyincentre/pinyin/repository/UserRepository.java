@@ -124,4 +124,28 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
         )
     """, nativeQuery = true)
     List<UserResponseProjection> getStudentsNotInClass(@Param("classId") String classId);
+    @Query(value = "SELECT COUNT(u.id) FROM users u JOIN user_roles r ON u.id = r.user_id WHERE r.role_name = 'STUDENT' AND (u.is_delete = 0 OR u.is_delete IS NULL)", nativeQuery = true)
+    long countTotalStudents();
+
+    @Query(value = "SELECT COUNT(u.id) FROM users u JOIN user_roles r ON u.id = r.user_id WHERE r.role_name = 'STUDENT' AND (u.is_delete = 0 OR u.is_delete IS NULL) AND u.created_date >= :since", nativeQuery = true)
+    long countNewStudents(@Param("since") java.time.LocalDateTime since);
+
+    @Query(value = "SELECT COUNT(u.id) FROM users u JOIN user_roles r ON u.id = r.user_id WHERE r.role_name = 'STUDENT' AND (u.is_delete = 0 OR u.is_delete IS NULL) AND u.status = :status", nativeQuery = true)
+    long countStudentsByStatus(@Param("status") int status);
+
+    @Query(value = "SELECT COUNT(u.id) FROM users u JOIN user_roles r ON u.id = r.user_id WHERE r.role_name = 'TEACHER' AND (u.is_delete = 0 OR u.is_delete IS NULL)", nativeQuery = true)
+    long countTotalTeachers();
+
+    @Query(value = "SELECT COUNT(u.id) FROM users u JOIN user_roles r ON u.id = r.user_id WHERE r.role_name = 'TEACHER' AND (u.is_delete = 0 OR u.is_delete IS NULL) AND u.status = 1", nativeQuery = true)
+    long countActiveTeachers();
+
+    @Query(value = "SELECT u.full_name as teacherName, COUNT(c.id) as classCount FROM users u JOIN user_roles r ON u.id = r.user_id LEFT JOIN classes c ON u.id = c.teacher_id WHERE r.role_name = 'TEACHER' AND (u.is_delete = 0 OR u.is_delete IS NULL) GROUP BY u.id, u.full_name", nativeQuery = true)
+    List<Object[]> countClassesPerTeacher();
+    @Query(value = "SELECT DATE(u.created_date) as date, COUNT(u.id) as count FROM users u JOIN user_roles r ON u.id = r.user_id WHERE r.role_name = 'STUDENT' AND u.created_date >= :since GROUP BY DATE(u.created_date) ORDER BY DATE(u.created_date) ASC", nativeQuery = true)
+    List<Object[]> countRegistrationsByDay(@Param("since") java.time.LocalDateTime since);
+
+    @Query(value = "SELECT DATE_FORMAT(u.created_date, '%Y-%m') as month, COUNT(u.id) as count FROM users u JOIN user_roles r ON u.id = r.user_id WHERE r.role_name = 'STUDENT' AND u.created_date >= :since GROUP BY DATE_FORMAT(u.created_date, '%Y-%m') ORDER BY DATE_FORMAT(u.created_date, '%Y-%m') ASC", nativeQuery = true)
+    List<Object[]> countRegistrationsByMonth(@Param("since") java.time.LocalDateTime since);
+    @Query(value = "SELECT CASE WHEN u.status = 1 THEN 'Active' WHEN u.status = 2 THEN 'Ban' ELSE 'Unknown' END as status, COUNT(u.id) as count FROM users u JOIN user_roles r ON u.id = r.user_id WHERE r.role_name = 'STUDENT' AND (u.is_delete = 0 OR u.is_delete IS NULL) GROUP BY u.status", nativeQuery = true)
+    List<Object[]> countStudentStatusDistribution();
 }

@@ -7,6 +7,7 @@ import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.repository.ClassRepository;
 import com.pinyincentre.pinyin.repository.CourseRepository;
 import com.pinyincentre.pinyin.repository.UserRepository;
+import com.pinyincentre.pinyin.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,9 @@ public class ClassServiceImpl implements ClassService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Override
     public ClassResponse getClassById(String id) {
@@ -83,6 +87,13 @@ public class ClassServiceImpl implements ClassService {
         Classroom savedClassroom = classRepository.save(classroom);
         log.info("Class response {}", savedClassroom);
 
+        // Notify teacher
+        notificationService.createNotification(
+                savedClassroom.getTeacherId(),
+                "Bạn đã được phân công lớp mới",
+                "Bạn đã được phân công giảng dạy lớp: " + savedClassroom.getName()
+        );
+
         fullName = userRepository.findFullNameById(savedClassroom.getTeacherId());
         courseName = courseRepository.findCourseNameById(savedClassroom.getCourseId());
 
@@ -110,9 +121,19 @@ public class ClassServiceImpl implements ClassService {
             return null;
         }
 
+        String oldTeacherId = classroom.getTeacherId();
         classroomMapper.updateClassroomFromRequest(classRequest, classroom);
         Classroom savedClassroom = classRepository.save(classroom);
         log.info("Class saved in update {}", savedClassroom);
+
+        // Notify teacher if changed
+        if (!savedClassroom.getTeacherId().equals(oldTeacherId)) {
+            notificationService.createNotification(
+                    savedClassroom.getTeacherId(),
+                    "Bạn đã được phân công lớp mới",
+                    "Bạn đã được phân công giảng dạy lớp: " + savedClassroom.getName()
+            );
+        }
 
         fullName = userRepository.findFullNameById(savedClassroom.getTeacherId());
         courseName = courseRepository.findCourseNameById(savedClassroom.getCourseId());

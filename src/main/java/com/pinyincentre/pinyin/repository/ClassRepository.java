@@ -64,4 +64,14 @@ public interface ClassRepository extends JpaRepository<Classroom, String> {
     WHERE uc.user_id = :studentId AND (c.is_delete = false OR c.is_delete IS NULL)
     """, nativeQuery = true)
     List<Map<String, Object>> findClassesByStudentId(@Param("studentId") String studentId);
+    @Query(value = "SELECT COUNT(c.id) FROM classes c WHERE (c.is_delete = 0 OR c.is_delete IS NULL) AND c.started_date <= :now AND c.end_date >= :now", nativeQuery = true)
+    long countTotalOpenClasses(@Param("now") java.time.LocalDateTime now);
+
+    @Query(value = "SELECT COUNT(c.id) FROM classes c WHERE (c.is_delete = 0 OR c.is_delete IS NULL) AND c.started_date > :now", nativeQuery = true)
+    long countUpcomingClasses(@Param("now") java.time.LocalDateTime now);
+
+    @Query(value = "SELECT COUNT(c.id) FROM classes c WHERE (c.is_delete = 0 OR c.is_delete IS NULL) AND (SELECT COUNT(*) FROM user_class uc WHERE uc.class_id = c.id) >= c.max_students", nativeQuery = true)
+    long countFullClasses();
+    @Query(value = "SELECT c.class_name, (SELECT COUNT(*) FROM user_class uc WHERE uc.class_id = c.id) as current_students, c.max_students FROM classes c WHERE (c.is_delete = 0 OR c.is_delete IS NULL)", nativeQuery = true)
+    List<Object[]> getClassSizeStats();
 }

@@ -9,6 +9,7 @@ import com.pinyincentre.pinyin.entity.Schedule;
 import com.pinyincentre.pinyin.entity.UserClass;
 import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.repository.*;
+import com.pinyincentre.pinyin.service.NotificationService;
 import com.pinyincentre.pinyin.service.classes.ClassService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class ClassroomController {
     private UserRepository userRepository;
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping("/get-all-class-active")
     public ResponseEntity<ApiResponse<List<Object[]>>> getAllFilesInLibrary(@RequestParam(defaultValue = "1") int page,
@@ -136,6 +140,13 @@ public class ClassroomController {
             
             cls.setIsDelete(false);
             classRepository.save(cls);
+
+            // Notify teacher
+            notificationService.createNotification(
+                    cls.getTeacherId(),
+                    "Bạn đã được phân công lớp mới",
+                    "Bạn đã được phân công giảng dạy lớp: " + cls.getName()
+            );
  
             // Tạo lịch học
             List<Map<String, String>> schedules = (List<Map<String, String>>) request.get("schedules");
@@ -265,6 +276,7 @@ public class ClassroomController {
             Classroom classroom = classRepository.findByClassId(id);
 
 
+            String oldTeacherId = classroom.getTeacherId();
             classroom.setName((String) request.get("className"));
             classroom.setCourseId((String) request.get("courseId"));
             classroom.setTeacherId((String) request.get("teacherId"));
@@ -282,6 +294,15 @@ public class ClassroomController {
             }
 
             classRepository.save(classroom);
+
+            // Notify teacher if changed
+            if (!classroom.getTeacherId().equals(oldTeacherId)) {
+                notificationService.createNotification(
+                        classroom.getTeacherId(),
+                        "Bạn đã được phân công lớp mới",
+                        "Bạn đã được phân công giảng dạy lớp: " + classroom.getName()
+                );
+            }
 
             // Xử lý lịch học
             List<Map<String, Object>> schedulesInput = (List<Map<String, Object>>) request.get("schedules");
@@ -338,6 +359,14 @@ public class ClassroomController {
                 userClass.setUserId(userId);
                 userClass.setClassId(classId);
                 userClassRepository.save(userClass);
+
+                // Notify student
+                Classroom cls = classRepository.findByClassId(classId);
+                notificationService.createNotification(
+                        userId,
+                        "Bạn đã được thêm vào lớp mới",
+                        "Bạn đã được thêm vào lớp học: " + (cls != null ? cls.getName() : "Lớp học mới")
+                );
             }
 
             return ResponseEntity.ok(Map.of("status", 200, "message", "Thêm học sinh thành công"));
