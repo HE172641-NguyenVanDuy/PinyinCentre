@@ -126,7 +126,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleDuplicateEntry(DataIntegrityViolationException ex, HttpServletRequest request) {
         String message = ex.getRootCause() != null && ex.getRootCause().getMessage() != null
                 && ex.getRootCause().getMessage().contains("Duplicate entry")
-                ? "Email này đã được đăng ký trước đó."
+                ? "Dữ liệu này đã tồn tại trong hệ thống (trùng lặp)."
                 : "Dữ liệu không hợp lệ hoặc trùng lặp.";
 
         Map<String, Object> response = new HashMap<>();

@@ -61,3 +61,9 @@ jwt:
   signerKey: UGdbTz3YkVWozpUVwBwql2icrmDK+/jzQBMRFodzNj32RNNf2VCRFTac0CC9ePil
   valid-duration: 3600 # in second
   refreshable-duration: 36000 # in seconds
+
+# Cấu hình PayOS
+payos:
+  client-id: 7f0fc39c-de9f-464a-9069-4985c005098f
+  api-key: b4a57196-21bd-4751-9b57-149fe2c86852
+  checksum-key: 31ec0949815db86691ed85203b35b4cdc54e16df34501fc7059cf05c2f257550

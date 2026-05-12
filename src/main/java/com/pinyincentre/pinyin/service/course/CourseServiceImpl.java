@@ -24,6 +24,9 @@ public class CourseServiceImpl implements CourseService {
     private CourseRepository courseRepository;
 
     @Autowired
+    private com.pinyincentre.pinyin.repository.HskCategoryRepository hskCategoryRepository;
+
+    @Autowired
     private CourseMapper courseMapper;
 
 
@@ -53,6 +56,9 @@ public class CourseServiceImpl implements CourseService {
     public String createCourse(CourseRequest request) {
 
         Course course = courseMapper.toCourse(request);
+        if (request.getHskCategoryId() != null) {
+            course.setHskCategory(hskCategoryRepository.findById(request.getHskCategoryId()).orElse(null));
+        }
         log.info("Mapped course object: {}", course);
         if(course != null) {
             log.info("Course created: {}", course);
@@ -69,6 +75,9 @@ public class CourseServiceImpl implements CourseService {
     public String updateCourse(String id, CourseRequest request) {
         Course course = courseRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         courseMapper.updateCourse(course, request);
+        if (request.getHskCategoryId() != null) {
+            course.setHskCategory(hskCategoryRepository.findById(request.getHskCategoryId()).orElse(null));
+        }
         courseRepository.save(course);
         return ErrorCode.SUCCESS.getMessage();
     }

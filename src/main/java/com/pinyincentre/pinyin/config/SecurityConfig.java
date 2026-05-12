@@ -65,6 +65,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/registration-info/create").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/gemini/generate-response").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/course/get-all-course").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/payment/webhook").permitAll()
 
                         .anyRequest().authenticated()
                 )
@@ -115,8 +116,7 @@ public class SecurityConfig {
             if (roles == null || roles.isEmpty()) return Collections.emptyList();
 
             return roles.stream()
-                    // hasAnyRole('ADMIN') checks for "ROLE_ADMIN" authority
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                    .map(role -> new SimpleGrantedAuthority(role.startsWith("ROLE_") ? role : "ROLE_" + role))
                     .collect(Collectors.toList());
         });
 

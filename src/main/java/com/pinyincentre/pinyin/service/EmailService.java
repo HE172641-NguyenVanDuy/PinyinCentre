@@ -100,6 +100,38 @@ public class EmailService {
         }
     }
 
+    @Async
+    public void sendEnrollmentEmail(String to, String studentName, String courseName, String className) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom("duyanhcules@gmail.com");
+            helper.setTo(to);
+            helper.setSubject("Xác nhận đăng ký khóa học thành công - PinYin Centre");
+
+            String htmlContent = String.format(
+                "<html>" +
+                "<body>" +
+                "<h2>Chào %s,</h2>" +
+                "<p>Chúc mừng bạn đã thanh toán thành công cho khóa học <strong>%s</strong> tại PinYin Centre!</p>" +
+                "<p>Hệ thống đã tự động ghi danh bạn vào lớp học: <strong>%s</strong>.</p>" +
+                "<p>Bạn có thể truy cập vào dashboard cá nhân để xem chi tiết lịch học.</p>" +
+                "<br/>" +
+                "<p>Trân trọng,<br/>PinYin Centre Team</p>" +
+                "</body>" +
+                "</html>",
+                studentName, courseName, className
+            );
+
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+            logger.info("Enrollment email sent to {}", to);
+        } catch (MessagingException e) {
+            logger.error("Failed to send email to {}", to, e);
+        }
+    }
+
 //    @Async
 //    public void sendEmailBookingRejected(Long bookingId, String reason, String confirmUrl) {
 //        BookingEntity booking = bookingRepository.getFirstByBookingId(bookingId);
