@@ -18,7 +18,7 @@ import java.util.UUID;
 public interface ClassRepository extends JpaRepository<Classroom, String> {
 
     @Query(value = "SELECT c.name AS className, co.courseName AS courseName, \n" +
-            "       u.fullName AS teacherName, c.startDate AS startDate, \n" +
+            "       u.fullName AS teacherName, u.id AS teacherId, c.startDate AS startDate, \n" +
             "       c.endDate AS endDate, c.maxStudents AS maxStudents " +
             " FROM Classroom c JOIN Course co ON c.courseId = co.id " +
             " JOIN UserEntity u ON c.teacherId = u.id " +
@@ -26,10 +26,11 @@ public interface ClassRepository extends JpaRepository<Classroom, String> {
     Page<Object[]> findAllClassesByStatusPagination(@Param("isDelete") boolean status, Pageable pageable);
 
     @Query(value = """
-    SELECT c.class_name, co.course_name,u.full_name, c.started_date, c.end_date,c.max_students FROM classes c join courses co\s
-    on c.course_id = co.id
-    JOIN users u\s
-    ON u.id = c.teacher_id
+    SELECT c.class_name as className, co.course_name as courseName, u.full_name as teacherName, 
+           c.teacher_id as teacherId, c.started_date as startDate, c.end_date as endDate, 
+           c.max_students as maxStudents 
+    FROM classes c join courses co ON c.course_id = co.id
+    JOIN users u ON u.id = c.teacher_id
     WHERE c.id = :id
     """, nativeQuery = true)
     ClassResponse findClassById(@Param("id") String id);
@@ -44,10 +45,11 @@ public interface ClassRepository extends JpaRepository<Classroom, String> {
     Classroom findByClassId(@Param("id") String id);
 
     @Query(value = """
-    SELECT c.class_name, co.course_name,u.full_name, c.started_date, c.end_date,c.max_students FROM classes c join courses co\s
-    on c.course_id = co.id
-    JOIN users u\s
-    ON u.id = c.teacher_id
+    SELECT c.class_name as className, co.course_name as courseName, u.full_name as teacherName, 
+           c.teacher_id as teacherId, c.started_date as startDate, c.end_date as endDate, 
+           c.max_students as maxStudents 
+    FROM classes c join courses co ON c.course_id = co.id
+    JOIN users u ON u.id = c.teacher_id
     WHERE co.id = :id
     """,nativeQuery = true)
     List<ClassResponse> findClassByCourseId(@Param("id") String id);

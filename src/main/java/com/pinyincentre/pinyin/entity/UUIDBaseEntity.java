@@ -25,6 +25,7 @@ public abstract class UUIDBaseEntity extends BaseEntity<String> {
 //        }
 //    }
 
+    @PrePersist
     @Override
     protected void onCreate() {
         if (getId() == null) {

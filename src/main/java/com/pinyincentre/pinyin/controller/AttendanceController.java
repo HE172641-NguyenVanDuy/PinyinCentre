@@ -29,7 +29,7 @@ public class AttendanceController {
 
     @GetMapping("/by-user/{userId}")
     public ResponseEntity<Map<String, Object>> getByUser(@PathVariable String userId) {
-        List<Attendance> list = attendanceRepository.findByUserId(userId);
+        List<Map<String, Object>> list = attendanceRepository.findDetailedByUserId(userId);
         return ResponseEntity.ok(Map.of(
                 "status", 200,
                 "result", list

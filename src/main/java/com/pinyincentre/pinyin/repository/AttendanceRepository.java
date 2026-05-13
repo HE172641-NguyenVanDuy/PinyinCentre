@@ -28,4 +28,14 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
         GROUP BY u.id
     """, nativeQuery = true)
     List<Map<String, Object>> getClassSummary(@Param("classId") String classId);
+
+    @Query(value = """
+        SELECT a.id as id, s.class_date as classDate, cl.class_name as className, a.status as status
+        FROM attendance a
+        JOIN schedules s ON a.schedule_id = s.id
+        JOIN classes cl ON s.class_id = cl.id
+        WHERE a.user_id = :userId
+        ORDER BY s.class_date DESC
+    """, nativeQuery = true)
+    List<Map<String, Object>> findDetailedByUserId(@Param("userId") String userId);
 }

@@ -14,6 +14,7 @@ public class ClassResponse {
     String className;
     String courseName;
     String teacherName;
+    String teacherId;
     Timestamp startDate;
     Timestamp endDate;
     int maxStudents;

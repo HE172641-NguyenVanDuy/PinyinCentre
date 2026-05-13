@@ -98,6 +98,7 @@ public class ClassServiceImpl implements ClassService {
         courseName = courseRepository.findCourseNameById(savedClassroom.getCourseId());
 
         classResponse.setTeacherName(fullName);
+        classResponse.setTeacherId(savedClassroom.getTeacherId());
         classResponse.setCourseName(courseName);
         classResponse.setClassName(savedClassroom.getName());
         classResponse.setMaxStudents(savedClassroom.getMaxStudents());
@@ -139,6 +140,7 @@ public class ClassServiceImpl implements ClassService {
         courseName = courseRepository.findCourseNameById(savedClassroom.getCourseId());
 
         classResponse.setTeacherName(fullName);
+        classResponse.setTeacherId(savedClassroom.getTeacherId());
         classResponse.setCourseName(courseName);
         classResponse.setClassName(savedClassroom.getName());
         classResponse.setMaxStudents(savedClassroom.getMaxStudents());
@@ -170,6 +172,7 @@ public class ClassServiceImpl implements ClassService {
         courseName = courseRepository.findCourseNameById(savedClassroom.getCourseId());
 
         classResponse.setTeacherName(fullName);
+        classResponse.setTeacherId(savedClassroom.getTeacherId());
         classResponse.setCourseName(courseName);
         classResponse.setClassName(savedClassroom.getName());
         classResponse.setMaxStudents(savedClassroom.getMaxStudents());
