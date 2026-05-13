@@ -9,6 +9,7 @@ import com.pinyincentre.pinyin.exception.AppException;
 import com.pinyincentre.pinyin.exception.ErrorCode;
 import com.pinyincentre.pinyin.repository.RoleRepository;
 import com.pinyincentre.pinyin.repository.UserRepository;
+import com.pinyincentre.pinyin.service.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import com.pinyincentre.pinyin.util.PasswordGeneratorUtil;
 
 @Service
 @Slf4j(topic = "USER-SERVICE")
@@ -31,14 +35,20 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-//    @Autowired
-//    private EmailService emailService;
+    @Autowired
+    private EmailService emailService;
+
+    @org.springframework.beans.factory.annotation.Value("${spring.mail.loginURL:http://localhost:5173/login}")
+    private String loginUrl;
 
     @Autowired
     private UserMapper userMapper;
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private static final int PAGE_SIZE = 10;
 
@@ -47,9 +57,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserResponse createUser(UserRequest request) throws IOException {
-        String testPass = "12345678";
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        String passwordGenerate;
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.EXIST_USERNAME);
         }
@@ -66,11 +73,27 @@ public class UserServiceImpl implements UserService {
 
         userEntity.setRoleEntities(Set.of(roleEntity));
 
-        // hash password
-        passwordGenerate = testPass;
+        // Generate and hash password
+        String passwordGenerate = PasswordGeneratorUtil.generateRandomPassword(10);
         userEntity.setPassword(passwordEncoder.encode(passwordGenerate));
 
-        return userMapper.toUserResponse(userRepository.save(userEntity));
+        UserEntity savedUser = userRepository.save(userEntity);
+
+        // Send welcome email
+        Map<String, String> variables = new HashMap<>();
+        variables.put("FULL_NAME", savedUser.getFullName() != null ? savedUser.getFullName() : savedUser.getUsername());
+        variables.put("EMAIL", savedUser.getEmail());
+        variables.put("PASSWORD", passwordGenerate);
+        variables.put("LOGIN_URL", loginUrl);
+
+        emailService.sendEmailWithTemplate(
+                savedUser.getEmail(),
+                "Chào mừng bạn đến với PinyinCentre",
+                "templates/WelcomeUser.html",
+                variables
+        );
+
+        return userMapper.toUserResponse(savedUser);
     }
 
     @PreAuthorize("@securityUtil.isCurrentUserId(#uid)")
@@ -152,9 +175,6 @@ public class UserServiceImpl implements UserService {
     @PreAuthorize("hasAnyRole('ADMIN','CENTRE_OWNER')")
     @Override
     public UserResponse createTeacherAccount(UserRequest request) throws IOException {
-        String testPass = "12345678";
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        String passwordGenerate;
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.EXIST_USERNAME);
         }
@@ -171,11 +191,27 @@ public class UserServiceImpl implements UserService {
 
         userEntity.setRoleEntities(Set.of(roleEntity));
 
-        // hash password
-        passwordGenerate = testPass;
+        // Generate and hash password
+        String passwordGenerate = PasswordGeneratorUtil.generateRandomPassword(10);
         userEntity.setPassword(passwordEncoder.encode(passwordGenerate));
 
-        return userMapper.toUserResponse(userRepository.save(userEntity));
+        UserEntity savedUser = userRepository.save(userEntity);
+
+        // Send welcome email
+        Map<String, String> variables = new HashMap<>();
+        variables.put("FULL_NAME", savedUser.getFullName() != null ? savedUser.getFullName() : savedUser.getUsername());
+        variables.put("EMAIL", savedUser.getEmail());
+        variables.put("PASSWORD", passwordGenerate);
+        variables.put("LOGIN_URL", loginUrl);
+
+        emailService.sendEmailWithTemplate(
+                savedUser.getEmail(),
+                "Chào mừng bạn đến với PinyinCentre - Tài khoản Giáo viên",
+                "templates/WelcomeUser.html",
+                variables
+        );
+
+        return userMapper.toUserResponse(savedUser);
     }
 
     @Cacheable(value = "userRoles", key = "#username")

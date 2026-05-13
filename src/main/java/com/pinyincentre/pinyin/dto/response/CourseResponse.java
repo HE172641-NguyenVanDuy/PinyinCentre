@@ -20,6 +20,12 @@ public class CourseResponse {
     private Timestamp createdDate;
 
     private int slotNumber;
+
+    private String description;
+    private Long price;
+    private String hskCategoryId;
+    private String hskCategoryName;
+
 //    private Timestamp startTime;
 //
 //    private Timestamp endTime;

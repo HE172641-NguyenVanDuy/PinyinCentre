@@ -27,8 +27,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: fotonhanh@gmail.com
-    password: nwvpmylcxhdfwyju   # hoặc App Password nếu bật 2FA
+    username: duyanhcules@gmail.com
+    password: dzbj hvfh care tson    # hoặc App Password nếu bật 2FA
     urlResetPassword: http://localhost:5173/reset-password?token=
     urlConfirmPayOutWithDrawMoney: http://localhost:5173/confirm-withdraw?token=
     activeAccountURL: http://localhost:5173/active-account?token=
@@ -61,3 +61,9 @@ jwt:
   signerKey: UGdbTz3YkVWozpUVwBwql2icrmDK+/jzQBMRFodzNj32RNNf2VCRFTac0CC9ePil
   valid-duration: 3600 # in second
   refreshable-duration: 36000 # in seconds
+
+# Cấu hình PayOS
+payos:
+  client-id: 7f0fc39c-de9f-464a-9069-4985c005098f
+  api-key: b4a57196-21bd-4751-9b57-149fe2c86852
+  checksum-key: 31ec0949815db86691ed85203b35b4cdc54e16df34501fc7059cf05c2f257550

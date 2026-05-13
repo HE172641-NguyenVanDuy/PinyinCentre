@@ -1,8 +1,6 @@
 package com.pinyincentre.pinyin.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,4 +19,14 @@ public class Course extends UUIDBaseEntity {
 
     @Column(name = "slot_quantity", nullable = false)
     private int slotNumber;
+
+    @Column(name = "price", nullable = false)
+    private Long price;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hsk_category_id")
+    private HskCategory hskCategory;
 }

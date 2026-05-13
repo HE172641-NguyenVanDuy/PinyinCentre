@@ -9,6 +9,7 @@ import com.pinyincentre.pinyin.entity.Submission;
 import com.pinyincentre.pinyin.repository.AssignmentRepository;
 import com.pinyincentre.pinyin.repository.SubmissionRepository;
 import com.pinyincentre.pinyin.repository.UserRepository;
+import com.pinyincentre.pinyin.repository.UserClassRepository;
 import com.pinyincentre.pinyin.service.classes.ClassService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,8 @@ public class AssignmentServiceImpl implements AssignmentService {
     private final CloudinaryService cloudinaryService;
     private final UserRepository userRepository;
     private final ClassService classService;
+    private final NotificationService notificationService;
+    private final UserClassRepository userClassRepository;
 
     @Override
     public AssignmentResponse createAssignment(AssignmentRequest request, String teacherId) throws IOException {
@@ -68,7 +71,29 @@ public class AssignmentServiceImpl implements AssignmentService {
                 .build();
 
         assignment = assignmentRepository.save(assignment);
+        
+        // Gửi thông báo cho học viên
+        try {
+            String className = Optional.ofNullable(classService.getClassById(request.getClassId()))
+                    .map(c -> c.getClassName())
+                    .orElse("Lớp học");
+            
+            String title = "Bài tập mới: " + assignment.getTitle();
+            String message = "Bạn có một bài tập mới trong lớp " + className + ". Hạn nộp: " + 
+                    (assignment.getDeadline() != null ? assignment.getDeadline().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : "N/A");
+            
+            sendNotificationsToClass(request.getClassId(), title, message);
+        } catch (Exception e) {
+            log.error("Lỗi khi gửi thông báo bài tập mới: {}", e.getMessage());
+        }
+
         return mapToAssignmentResponse(assignment, null);
+    }
+
+    private void sendNotificationsToClass(String classId, String title, String message) {
+        userClassRepository.findByClassId(classId).forEach(uc -> {
+            notificationService.createNotification(uc.getUserId(), title, message);
+        });
     }
 
     @Override
@@ -179,6 +204,21 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
 
         assignment = assignmentRepository.save(assignment);
+
+        // Gửi thông báo cập nhật cho học viên
+        try {
+            String className = Optional.ofNullable(classService.getClassById(assignment.getClassId()))
+                    .map(c -> c.getClassName())
+                    .orElse("Lớp học");
+            
+            String title = "Cập nhật bài tập: " + assignment.getTitle();
+            String message = "Bài tập trong lớp " + className + " đã được cập nhật. Vui lòng kiểm tra lại.";
+            
+            sendNotificationsToClass(assignment.getClassId(), title, message);
+        } catch (Exception e) {
+            log.error("Lỗi khi gửi thông báo cập nhật bài tập: {}", e.getMessage());
+        }
+
         return mapToAssignmentResponse(assignment, null);
     }
 

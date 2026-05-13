@@ -68,6 +68,10 @@
 <!--			<version>9.37.3</version> &lt;!&ndash; Hoặc version mới nhất &ndash;&gt;-->
 <!--		</dependency>-->
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
 			<version>0.11.5</version>
@@ -103,6 +107,11 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>vn.payos</groupId>
+			<artifactId>payos-java</artifactId>
+			<version>2.0.1</version> <!-- Nâng cấp lên v2 để hỗ trợ đầy đủ các trường mới của API -->
 		</dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>

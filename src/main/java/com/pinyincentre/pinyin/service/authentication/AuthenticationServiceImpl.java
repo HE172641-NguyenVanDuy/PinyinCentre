@@ -2,6 +2,7 @@ package com.pinyincentre.pinyin.service.authentication;
 
 import com.auth0.jwt.JWT;
 import com.pinyincentre.pinyin.constant.AuthMessage;
+import com.pinyincentre.pinyin.constant.EmailEnum;
 import com.pinyincentre.pinyin.constant.RoleType;
 import com.pinyincentre.pinyin.dto.*;
 import com.pinyincentre.pinyin.dto.response.UserResponse;
@@ -10,6 +11,7 @@ import com.pinyincentre.pinyin.entity.UserEntity;
 import com.pinyincentre.pinyin.exception.BusinessException;
 import com.pinyincentre.pinyin.repository.RoleRepository;
 import com.pinyincentre.pinyin.repository.UserRepository;
+import com.pinyincentre.pinyin.service.EmailService;
 import com.pinyincentre.pinyin.service.user.UserMapper;
 import com.pinyincentre.pinyin.util.JwtUtil;
 import com.pinyincentre.pinyin.util.RedisKeyUtil;
@@ -57,6 +59,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final RedisKeyUtil redisKeyUtil;
     private final GoogleOAuthProperties googleOAuthProperties;
     private final UserMapper userMapper;
+    private final EmailService emailService;
 //    private final CartRepository cartRepository;
     @Value("${spring.mail.urlResetPassword}")
     private String urlResetPasswordCallBack;
@@ -98,12 +101,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         redisTemplate.opsForValue().set(key, activeAccountToken, 15, TimeUnit.MINUTES);
         String resetLink = activeAccountCallBackUrl + activeAccountToken;
 
-//        emailService.sendEmailWithTemplate(
-//                user.getEmail(),
-//                EmailEnum.SUBJECT_ACTIVE_ACCOUNT.getMessage(),
-//                resetLink,
-//                EmailEnum.TEMPLATE_ACTIVE_ACCOUNT.getMessage()
-//        );
+        emailService.sendEmailWithTemplate(
+                user.getEmail(),
+                EmailEnum.SUBJECT_ACTIVE_ACCOUNT.getMessage(),
+                resetLink,
+                EmailEnum.TEMPLATE_ACTIVE_ACCOUNT.getMessage()
+        );
         return "Vui lòng kiểm tra email dể kích hoạt tài khoản";
     }
 
@@ -310,12 +313,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         System.out.println(resetToken);
         String resetLink = urlResetPasswordCallBack + resetToken;
 
-//        emailService.sendEmailWithTemplate(
-//                user.getEmail(),
-//                EmailEnum.SUBJECT_CHANGE_PASSWORD.getMessage(),
-//                resetLink,
-//                EmailEnum.TEMPLATE_CHANGE_PASSWORD.getMessage()
-//        );
+        Map<String, String> variables = new HashMap<>();
+        variables.put("RESET_URL", resetLink);
+
+        emailService.sendEmailWithTemplate(
+                user.getEmail(),
+                EmailEnum.SUBJECT_CHANGE_PASSWORD.getMessage(),
+                "templates/ForgotPassword.html",
+                variables
+        );
 
     }
 

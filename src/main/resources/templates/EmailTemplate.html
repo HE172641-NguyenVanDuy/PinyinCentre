@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FotoNhanh - Email Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .logo-section {
+            text-align: center;
+            padding: 40px 30px 20px;
+            background: linear-gradient(135deg, #b8a1e3 0%, #9c88cc 100%);
+        }
+
+        .logo {
+            font-size: 42px;
+            font-weight: 700;
+            color: #6b5a9c;
+            display: inline-block;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(107, 90, 156, 0.2);
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 30px 40px 20px;
+            background: #ffffff;
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtitle {
+            font-size: 18px;
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .content {
+            padding: 0 40px 30px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        .category-section {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .category-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            margin-bottom: 25px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .stats {
+            background: #f8f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            border-left: 4px solid #b8a1e3;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 14px 32px;
+            background: linear-gradient(to right, #b8a1e3, #9c88cc);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(184, 161, 227, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(184, 161, 227, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 40px;
+            font-size: 14px;
+            color: #94a3b8;
+            background: #f1f5f9;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .signature {
+            margin-top: 20px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 15px;
+            margin: 10px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: #8d7abf;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .logo-section, .welcome-section, .content, .footer {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .logo {
+                font-size: 32px;
+                padding: 12px 25px;
+            }
+
+            .welcome-title {
+                font-size: 24px;
+            }
+
+            .features {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Logo Section với màu light -->
+    <div class="logo-section">
+        <div class="logo">✨ FotoNhanh</div>
+    </div>
+
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h1 class="welcome-title">Chào mừng đến với FotoNhanh!</h1>
+        <p class="welcome-subtitle">Bắt đầu hành trình nhiếp ảnh của bạn</p>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content">
+        <!--        <div class="category-section">-->
+        <!--            <h2 class="category-title">Khám phá các nhiếp ảnh gia hàng đầu</h2>-->
+        <!--        </div>-->
+
+        <p class="description">
+            %s
+        </p>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">📷</div>
+                <div class="feature-title">Đa dạng phong cách</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⭐</div>
+                <div class="feature-title">Đánh giá thực tế</div>
+
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💳</div>
+                <div class="feature-title">Thanh toán an toàn</div>
+
+            </div>
+        </div>
+
+
+        <div style="text-align: center;">
+            <a href="https://fotonhanh.com" class="btn">KHÁM PHÁ NGAY</a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2025 FotoNhanh - Online Photographer Booking Website</p>
+
+        <p style="margin-top: 15px;">
+            <a href="https://fotonhanh.com" style="color: #8d7abf; text-decoration: none;">Trang chủ</a> |
+            <a href="https://fotonhanh.com/about" style="color: #8d7abf; text-decoration: none;">Về chúng tôi</a> |
+            <a href="https://fotonhanh.com/contact" style="color: #8d7abf; text-decoration: none;">Liên hệ</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>
