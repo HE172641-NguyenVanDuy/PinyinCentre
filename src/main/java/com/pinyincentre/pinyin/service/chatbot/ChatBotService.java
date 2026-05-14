@@ -18,8 +18,12 @@ public class ChatBotService {
     @Value("${gemini.api.key}")
     private String geminiApiKey;
 
-    @Value("${gemini.api.url:https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent}")
+    // Chỉ giữ lại Domain gốc
+    @Value("${gemini.api.base-url:https://generativelanguage.googleapis.com/v1}")
     private String geminiBaseUrl;
+
+    @Value("${gemini.model:gemini-1.5-flash}")
+    private String geminiModel;
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -30,7 +34,10 @@ public class ChatBotService {
     }
 
     private String getGeminiApiUrl() {
-        return geminiBaseUrl + "?key=" + geminiApiKey;
+        String url = String.format("%s/models/%s:generateContent?key=%s",
+                geminiBaseUrl, geminiModel, geminiApiKey);
+        System.out.println("DEBUG - Calling URL: " + url); // Xem ở console xem nó có bị thừa dấu / hay gì không
+        return url;
     }
 
     private String getPinyinCentreContext() {
@@ -124,17 +131,25 @@ public class ChatBotService {
 
     private String extractResponseText(String responseBody) {
         try {
-            ObjectNode jsonResponse = objectMapper.readTree(responseBody).deepCopy();
-            return jsonResponse
-                    .get("candidates")
-                    .get(0)
-                    .get("content")
-                    .get("parts")
-                    .get(0)
-                    .get("text")
-                    .asText();
+            ObjectNode jsonResponse = (ObjectNode) objectMapper.readTree(responseBody);
+            
+            // Kiểm tra xem có candidates không (tránh lỗi khi bị chặn bởi Safety Filters)
+            if (jsonResponse.has("candidates") && jsonResponse.get("candidates").size() > 0) {
+                return jsonResponse
+                        .get("candidates")
+                        .get(0)
+                        .get("content")
+                        .get("parts")
+                        .get(0)
+                        .get("text")
+                        .asText();
+            } else if (jsonResponse.has("promptFeedback")) {
+                return "Câu hỏi bị từ chối do vi phạm chính sách nội dung của AI.";
+            }
+            
+            return "AI không trả về kết quả. Vui lòng thử lại.";
         } catch (Exception e) {
-            logger.error("Error parsing Gemini API response", e);
+            logger.error("Error parsing Gemini API response: {}", responseBody, e);
             throw new RuntimeException("Failed to parse API response", e);
         }
     }

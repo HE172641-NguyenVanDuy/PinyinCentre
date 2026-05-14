@@ -122,17 +122,14 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(DataIntegrityViolationException.class)
+
+        @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleDuplicateEntry(DataIntegrityViolationException ex, HttpServletRequest request) {
-<<<<<<< HEAD
-        String message = "Dữ liệu không hợp lệ hoặc đã tồn tại trên hệ thống.";
-=======
+
         String message = ex.getRootCause() != null && ex.getRootCause().getMessage() != null
                 && ex.getRootCause().getMessage().contains("Duplicate entry")
                 ? "Dữ liệu này đã tồn tại trong hệ thống (trùng lặp)."
                 : "Dữ liệu không hợp lệ hoặc trùng lặp.";
->>>>>>> 5cd265467c41126d102da5fab8eda2b7855bf31e
-
         Map<String, Object> response = new HashMap<>();
         response.put("status", 400);
         response.put("message", message);
@@ -141,5 +138,24 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
+//    @ExceptionHandler(DataIntegrityViolationException.class)
+//    public ResponseEntity<?> handleDuplicateEntry(DataIntegrityViolationException ex, HttpServletRequest request) {
+//<<<<<<< HEAD
+//        String message = "Dữ liệu không hợp lệ hoặc đã tồn tại trên hệ thống.";
+//=======
+//        String message = ex.getRootCause() != null && ex.getRootCause().getMessage() != null
+//                && ex.getRootCause().getMessage().contains("Duplicate entry")
+//                ? "Dữ liệu này đã tồn tại trong hệ thống (trùng lặp)."
+//                : "Dữ liệu không hợp lệ hoặc trùng lặp.";
+//>>>>>>> 5cd265467c41126d102da5fab8eda2b7855bf31e
+//
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("status", 400);
+//        response.put("message", message);
+//        response.put("path", request.getRequestURI());
+//        response.put("timestamp", LocalDateTime.now());
+//
+//        return ResponseEntity.badRequest().body(response);
+//    }
 }
 
