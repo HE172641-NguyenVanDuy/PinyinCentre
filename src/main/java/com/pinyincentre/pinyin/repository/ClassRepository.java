@@ -58,11 +58,13 @@ public interface ClassRepository extends JpaRepository<Classroom, String> {
     @Query(value = """
     SELECT c.id, c.class_name as name, co.course_name as course_name, 
            c.started_date as start_date, c.end_date as end_date,
+           u.full_name as teacher_name,
            (SELECT COUNT(*) FROM user_class uc2 WHERE uc2.class_id = c.id) as student_count,
            (SELECT COUNT(*) FROM schedules s WHERE s.class_id = c.id AND (s.is_delete = false OR s.is_delete IS NULL)) as schedule_count
     FROM classes c
     JOIN courses co ON c.course_id = co.id
     JOIN user_class uc ON uc.class_id = c.id
+    LEFT JOIN users u ON u.id = c.teacher_id
     WHERE uc.user_id = :studentId AND (c.is_delete = false OR c.is_delete IS NULL)
     """, nativeQuery = true)
     List<Map<String, Object>> findClassesByStudentId(@Param("studentId") String studentId);

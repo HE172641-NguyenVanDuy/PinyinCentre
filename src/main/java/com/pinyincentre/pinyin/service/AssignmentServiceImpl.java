@@ -55,7 +55,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
         if (request.getFile() != null && !request.getFile().isEmpty()) {
             Map uploadResult = cloudinaryService.upload(request.getFile());
-            fileUrl = (String) uploadResult.get("url");
+            fileUrl = (String) uploadResult.get("secure_url");
             fileId = (String) uploadResult.get("public_id");
         }
 
@@ -128,7 +128,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public SubmissionResponse submitAssignment(SubmissionRequest request, String studentId) throws IOException {
         Map uploadResult = cloudinaryService.upload(request.getFile());
-        String fileUrl = (String) uploadResult.get("url");
+        String fileUrl = (String) uploadResult.get("secure_url");
         String fileId = (String) uploadResult.get("public_id");
 
         Submission submission = submissionRepository.findByAssignmentIdAndStudentId(request.getAssignmentId(), studentId)
@@ -199,7 +199,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             }
             
             Map uploadResult = cloudinaryService.upload(request.getFile());
-            assignment.setFileUrl((String) uploadResult.get("url"));
+            assignment.setFileUrl((String) uploadResult.get("secure_url"));
             assignment.setFileId((String) uploadResult.get("public_id"));
         }
 

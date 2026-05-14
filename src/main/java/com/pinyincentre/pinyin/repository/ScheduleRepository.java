@@ -52,4 +52,16 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             @Param("studentId") String studentId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+
+    @Query(value = """
+        SELECT s.id, s.class_date as classDate, s.start_time as startTime, 
+               s.end_time as endTime, s.link, a.status as attendanceStatus
+        FROM schedules s
+        LEFT JOIN attendance a ON s.id = a.schedule_id AND a.user_id = :studentId
+        WHERE s.class_id = :classId AND (s.is_delete = false OR s.is_delete IS NULL)
+        ORDER BY s.class_date DESC
+    """, nativeQuery = true)
+    List<Map<String, Object>> findSchedulesByClassIdAndStudentId(
+            @Param("classId") String classId, 
+            @Param("studentId") String studentId);
 }

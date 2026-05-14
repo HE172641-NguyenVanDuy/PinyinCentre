@@ -16,7 +16,13 @@ public class CloudinaryService {
     private Cloudinary cloudinary;
 
     public Map upload(MultipartFile file) throws IOException {
-        return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+        // Sử dụng resource_type: raw kết hợp với use_filename để giữ lại định dạng file gốc (.pdf, .docx...)
+        // giúp trình duyệt nhận diện được loại file khi tải về.
+        return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                "resource_type", "raw",
+                "use_filename", true,
+                "unique_filename", true
+        ));
     }
 
     public Map delete(String publicId) throws IOException {
