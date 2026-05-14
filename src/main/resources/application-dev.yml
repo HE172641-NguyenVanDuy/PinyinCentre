@@ -64,6 +64,6 @@ jwt:
 
 # Cấu hình PayOS
 payos:
-  client-id: 7f0fc39c-de9f-464a-9069-4985c005098f
-  api-key: b4a57196-21bd-4751-9b57-149fe2c86852
-  checksum-key: 31ec0949815db86691ed85203b35b4cdc54e16df34501fc7059cf05c2f257550
+  client-id: 55100b30-53d9-4fa8-8618-c77f4d1af4b7
+  api-key: 3f726f70-cde1-4ca5-ac0f-ed304296d312
+  checksum-key: 895d9f18e6ef0567b942dfa9b9fb60a9b39da02859fe4d08746c2c2315bd2089

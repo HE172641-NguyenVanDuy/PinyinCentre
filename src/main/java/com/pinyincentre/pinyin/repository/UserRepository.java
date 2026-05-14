@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -97,6 +98,18 @@ public interface UserRepository extends JpaRepository<UserEntity,String> {
     SELECT u.full_name FROM USERS u WHERE u.id = :id
     """,nativeQuery = true)
     String findFullNameById(@Param("id") String id);
+
+    @Query(value = """
+        SELECT 
+            U.id AS id, U.username AS username, U.email AS email, U.phone_number AS phoneNumber,
+            U.dob AS dob, U.cic AS cic, U.full_name AS fullName, U.updated_date AS updateDate,
+            U.created_date AS createDate, U.expired_date AS expireDate, U.status AS status, U.address AS address,
+            U.gender AS gender
+        FROM users U
+        INNER JOIN user_class UC ON U.id = UC.user_id
+        WHERE UC.class_id = :classId
+    """, nativeQuery = true)
+    List<Map<String, Object>> findStudentsByClassId(@Param("classId") String classId);
 
     @Query(value = """
         SELECT 
